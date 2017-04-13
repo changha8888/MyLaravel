@@ -39,3 +39,35 @@ Coding:
 - Make seeder / php artisan make:seeder UsersTableSeeder ( database/seeds/UsersTableSeeder.php ).
 
 
+
+
+Apr-12-2017 - Chuc nang:
+
++ Chuc nang Dang Nhap ( http:://localhost/login)
++ Chuc nang Dang Ki ( http:://localhost/register )
++ Multi Language /vi (tieng Viet) || /en (tieng Anh)
++ Multi roles.
+
+Cai dat: 
+1. Tao bang CSDL su dung Migration (php artisan migrate )
+2. Seeding CSDL ( php artisan db:seed ) - du lieu mau co san 1 user admin - role: 1
+
+
+Mo ta:
+
+	Register user voi role mac dinh = 2.
+	Voi role = 1 co quyen cao nhat, co the thay doi permission, xoa user khac.
+	
+	Multi language : them hau to /vi hoac /en de thay doi ngon ngu.
+	Moi role co 1 view khac nhau.
+
+
+
+
+
+
+
+
+
+
+
