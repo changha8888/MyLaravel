@@ -13,7 +13,11 @@
 		'role'		=> 'Role',
 		'action'	=> 'Action',
 		'permission'=> 'Permission',
-		'delete' 	=> 'Delete'
+		'delete' 	=> 'Delete',
+		'save'		=> 'Save',
+		'edit_role'	=> 'Edit Role',
+		'login_couter' => 'Login Counter',
+		'logout'	=> 'Log Out',
 
 	];
 

@@ -16,6 +16,11 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Schema::defaultStringLength(191);
+        // dd(session()->has('lang'));
+
+        // $lang = session()->has('lang') ? session()->get('lang') : "en";
+
+        // \App::setlocale('vi');
     }
 
     /**

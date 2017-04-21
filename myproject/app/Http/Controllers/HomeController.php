@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use App\Users;
+use App\Roles;
 use Illuminate\Support\Facades\Redirect;
+use DB;
 
 class HomeController extends Controller
 {
@@ -17,7 +19,13 @@ class HomeController extends Controller
     // ROLe 1 : ADMIN
     public function index(){
 
-        $users = Users::all();
+        // $users = Users::all();
+
+        $users = DB::table('users')
+            ->join('roles', 'users.id', '=', 'roles.id')
+            ->select('users.*', 'roles.permission','roles.count_login')
+            ->get();
+       
 
     	return view('home',['users'=>$users]);
 
@@ -41,9 +49,13 @@ class HomeController extends Controller
 
      // ROLE 4
 
-    public function index_role4(){
-        
-        return view('role4');
+    public function not_admin(){
+         $users = DB::table('users')
+            ->join('roles', 'users.id', '=', 'roles.id')
+            ->select('users.*', 'roles.permission','roles.count_login')
+            ->get();
+
+        return view('not_admin',['users'=>$users]);
 
     }   
 
@@ -56,9 +68,10 @@ class HomeController extends Controller
 
     public function edit($id){
 
-          $user = Users::findOrFail($id);
+          // $user = Users::findOrFail($id);
+          $permission = Roles::findOrFail($id);
         // return to the edit views
-        return view('edit',compact('user'));
+        return view('edit',compact('permission'));
     }
 
 
@@ -66,11 +79,11 @@ class HomeController extends Controller
       public function update(Request $request, $id)
     {
         //
-        $user = Users::findOrFail($id);
+        $role = Roles::findOrFail($id);
 
-        $user->role = $request->role;
+        $role->permission = $request->role;
        
-        $user->save();
+        $role->save();
 
         return redirect()->route('home');
         
@@ -82,6 +95,10 @@ class HomeController extends Controller
     {
         $user = Users::findOrFail($id);
         $user->delete();
+
+        $role = Roles::findOrFail($id);
+        $role->delete();
+
         return redirect()->back();
     }
 

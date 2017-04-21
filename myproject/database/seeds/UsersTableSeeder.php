@@ -19,9 +19,18 @@ class UsersTableSeeder extends Seeder
     		'name' => 'admin',
     		'email'=> 'admin@test.com',
     		'password'=>bcrypt('12345678'),
-    		'role'	=>'1'
+    		// 'role'	=>'1'
 
 
     	]);
+
+        DB::table('roles')->truncate();
+
+        App\Roles::create([
+            
+            'id' => '1',
+            'permission'=> '1',
+
+        ]);
     }
 }

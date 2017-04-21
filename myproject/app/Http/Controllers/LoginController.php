@@ -7,6 +7,9 @@ use Validator;
 use Auth;
 use Illuminate\Support\MessageBag;
 use App\Users;
+use App\Roles;
+
+use DB;
 
 
 
@@ -43,27 +46,29 @@ class LoginController extends Controller
     		$email 		= $request->input('email');
     		$password 	= $request->input('password');
     		$remember 	= $request->input('remember') ? true :false;
-            $check      = Users::where('email',$request->email)->first();
-
+            
+       
 
     		if( Auth::attempt(['email' => $email,'password' => $password], $remember)){
 
-            // check role user.   
-             
-                switch($check->role){
+                $id_user        = Users::where('email',$request->email)->first()->id;
+                $count_login    = Roles::where('id',$id_user)->first()->count_login;
+                $role           = Roles::where('id',$id_user)->first()->permission;
+                
+    
 
-                    case 1: return redirect()->intended('/');
-                    break;
+                    DB::table('roles')
+                        ->where('id',$id_user )
+                        ->update(['count_login' => $count_login + 1 ]);
 
-                    case 2: return redirect()->intended('/role2');
-                    break;
+                if($role == 1){
 
-                    case 3: return redirect()->intended('/role3');
-                    break;
+                    return redirect()->intended('/');
 
-                    case 4: return redirect()->intended('/role4');
-                    break;
+                }else{
+                    return redirect()->intended('/not_admin');
                 }
+
             
     		}else{
     			$errors = new MessageBag(['errorlogin'=>'wrong email or password']);
@@ -72,34 +77,53 @@ class LoginController extends Controller
     	}
     }
 
-    
+
 
     public function postRegister(Request $request){
 
      	$rules = [
-     		'name'        => 'required',
-    		'email'       => 'required|email',
-    		'password'    =>'required|min:6',
+     		'name'                => 'required',
+    		'email'               => 'required|email',
+    		'password'            => 'required|min:6',
+            'password_confirm'    => 'required|same:password'
 
     	];
     	
     	$validator = Validator::make($request->all(),$rules);
 
-    	if(!$validator->fails()){
+        if($validator->fails()){
 
-    		$users = new Users;
+            return redirect()->back()->withErrors($validator);
+        }    
 
-    		$users->name      = $request->name;
-    		$users->email     = $request->email;
-    		$users->password  = bcrypt($request->password);
-    		$users->save();
+    	else{
 
-    		return redirect()->back()->with('message','Register Success !!!');
+    		// $users = new Users;
 
-    	}else {
+    		// $users->name      = $request->name;
+    		// $users->email     = $request->email;
+    		// $users->password  = bcrypt($request->password);
+    		// $users->save();
+            $user = Users::where('email', '=', $request->email)->first();
+            if ($user === null) {
+                $id = DB::table('users')->insertGetId( 
+                    array(
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'password'=> bcrypt($request->password),
+                        )
+                );
 
-            return redirect()->back()->with('message','Register Fail !!!');
-        }
+                DB::table('roles')->insert(['id' => $id, 'permission' => 2]);
+
+                return redirect('login')->with('message','Register Success !!!');
+
+            } else {
+
+                return redirect()->back()->with('message_fail', 'exist');
+            }    
+
+    	}
 	
     }
 

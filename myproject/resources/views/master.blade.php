@@ -11,7 +11,8 @@
 		<script src="//code.jquery.com/jquery.js">\
 		</script>
 		<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js"></script>
-
+		<link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap-toggle.css')}}">
+		<script type="text/javascript" src="{{asset('/js/bootstrap-toggle.js')}}"></script>
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
@@ -32,9 +33,43 @@
 				</button>
 				<a class="navbar-brand" href="#">Laravel</a>
 			</div>
+
+
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav navbar-right">
+
+
+				<li style="margin-top: 7px;">
+					<form method="get" id='setlang' action="{{route('setlang')}}">
+						<select name="lang" class="form-control" onchange="$('#setlang').submit();">
+
+							<option @if (App::getLocale() == 'en') selected="selected" @endif value="en">English</option>
+							<option @if (App::getLocale() == 'jp') selected="selected" @endif value="jp">Japan</option>
+						</select> 
+					</form>
+				</li>
+
+
+					@if(Auth::check())
+					
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{Auth::user()->name}} <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="{{url('logout')}}">{{__('language.logout')}}</a></li>	
+							</ul>
+						</li>
+
+				 	@else
+
+				 	<li><a href="{{ url('login') }}">{{ __('language.login') }}</a></li>
+					<li><a href="{{ url('register') }}">{{ __('language.register') }}</a></li>
+
+					@endif
+				</ul>
 	
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			
+			</div><!-- /.navbar-collapse -->
+
+
 		</div>
 	</nav>
 

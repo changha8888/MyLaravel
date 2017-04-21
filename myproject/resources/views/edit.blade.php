@@ -4,20 +4,11 @@
 
 <div class="container">
 	<div class="row">
-		<h4>Permission</h4>
+		<h4>{{ __('language.edit_role') }}</h4>
 
-		<form class="" action="{{route('home.update',$user->id)}}" method="post">
-		    <!-- <input name="_method" type="hidden" value="PATCH">
-		      {{csrf_field()}}
-		    <div class="form-group">
+		<form class="" action="{{route('home.update',$permission->id)}}" method="post">
 
-			    <input type="text" name="role" class="form-control" value="{{$user->role}}">
-			       
-		    </div>
-		      
-		    <div class="form-group">
-		        <input type="submit" class="btn btn-primary" value="save"> -->
-		        <?php $role = $user->role; ?>
+		        <?php $role = $permission->permission; ?>
 		        <input name="_method" type="hidden" value="PATCH">
 		     	{{csrf_field()}}
 			    <div class="radio-inline">
@@ -33,7 +24,7 @@
 			      	<label><input type="radio" name="role" value="4" <?php echo ($role == 4) ? "checked":''; ?> >Role 4</label>
 			    </div>
 			    <div class="form-group">
-		        	<input type="submit" class="btn btn-primary" value="save">		
+		        	<input type="submit" class="btn btn-primary" value="{{ __('language.save') }}">		
 
 		    	</div>
     	</form>

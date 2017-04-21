@@ -3,23 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Session;
+use URL;
 
 class LanguageController extends Controller
 {
-    //
-    public function login_trans(Request $request, $locale){
-    	\App::setlocale($locale);
 
-    	return view('login');
-    	// return view('test');
-    	// dd(@lang('language.message'));
 
-    }
+    public function set_lang(Request $request){
 
-    public function register_trans(Request $request, $locale){
-    	\App::setlocale($locale);
+    	$locale = $request->lang;
+        Session::put('locale',$locale);
 
-    	return view('register');
-    }    
+        return redirect(url(URL::previous()));
+    } 
+
+//     public function set_lang(Request $request){
+        
+//         $lang = session()->has('lang') ? $request->input('lang') : "en";
+
+// // \App::setlocale($request->lang);
+//         session()->put('lang',$lang);
+//         // dd(session()->get('lang'));
+//         // return view('login');
+//         return redirect(url(URL::previous()));
+//     }   
 
 }
