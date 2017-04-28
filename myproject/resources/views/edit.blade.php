@@ -9,6 +9,7 @@
 		<form class="" action="{{route('home.update',$permission->id)}}" method="post">
 
 		        <?php $role = $permission->permission; ?>
+
 		        <input name="_method" type="hidden" value="PATCH">
 		     	{{csrf_field()}}
 			    <div class="radio-inline">

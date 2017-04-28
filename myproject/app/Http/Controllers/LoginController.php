@@ -16,6 +16,7 @@ use DB;
 class LoginController extends Controller
 {
     //
+    
     public function getLogin(){
     	return view('login');
     }
@@ -114,7 +115,7 @@ class LoginController extends Controller
                         )
                 );
 
-                DB::table('roles')->insert(['id' => $id, 'permission' => 2]);
+                DB::table('roles')->insert(['id' => $id, 'permission' => 4]);
 
                 return redirect('login')->with('message','Register Success !!!');
 
@@ -128,7 +129,10 @@ class LoginController extends Controller
     }
 
 
-
+    // public function getLogout(){
+    //     Auth::logout();
+    //     return redirect('login');
+    // }
 
 
 }

@@ -25,9 +25,17 @@ class HomeController extends Controller
             ->join('roles', 'users.id', '=', 'roles.id')
             ->select('users.*', 'roles.permission','roles.count_login')
             ->get();
+
+        $company = DB::table('company')
+            ->join('usercompany', 'usercompany.id_company', '=', 'company.id_company')
+            ->join('users', 'users.id', '=', 'usercompany.id_user')
+            ->select('users.id','users.email','company.*' )
+            ->get();    
+
+
        
 
-    	return view('home',['users'=>$users]);
+    	return view('home',['users'=>$users,'company'=> $company]);
 
     }
 
@@ -59,11 +67,6 @@ class HomeController extends Controller
 
     }   
 
-
-    public function getLogout(){
-    	Auth::logout();
-    	return redirect('login');
-    }
 
 
     public function edit($id){
@@ -99,8 +102,21 @@ class HomeController extends Controller
         $role = Roles::findOrFail($id);
         $role->delete();
 
+        DB::table('usercompany')->where('id_user', '=', $id)->delete();
+
+        $id_company = DB::table('usercompany')->where('id_user', $id)->value('id_company');
+        
+        DB::table('company')->where('id_company', '=', $id_company)->delete();
+
         return redirect()->back();
     }
+
+
+      public function getLogout(){
+        Auth::logout();
+        return redirect('login');
+    }
+
 
 
 }

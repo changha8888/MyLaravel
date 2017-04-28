@@ -1,6 +1,18 @@
 @extends('master')
 
 	@section('content')
+						@if (session('message'))
+
+							<div class="alert alert-success">
+								
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+								{{session('message')}}
+
+							</div>
+
+						@endif
+
+  <a href="{{route('addcompany')}}" class="btn btn-primary">Add Company</a>
 
 		  	<table class="table table-striped">
 			        <tr>
@@ -25,7 +37,7 @@
 				          	<form class="" action="{{route('home.destroy',$user->id)}}" method="post">
 					            <input type="hidden" name="_method" value="delete">
 					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-					            <a href="{{route('home.edit',$user->id)}}" class="btn btn-primary">{{ __('language.role') }}</a>
+					            <!-- <a href="{{route('home.edit',$user->id)}}" class="btn btn-primary">{{ __('language.role') }}</a> -->
 					            <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete this data');" name="name" value="{{ __('language.delete') }}">
 
 				            </form>
@@ -35,55 +47,47 @@
 
 			    @endforeach
 
-			</table>  
 
-			<table class="table">
-				<thead>
-					<tr>
-						<th>{{__('language.role')}}</th>
-						<th>{{__('language.name')}}</th>
-			       		<th>{{__('language.email')}}</th>
-			       		<th>Login Max</th>
+			    <table class="table table-hover">
+			    	<thead>
+			    		<tr>
+			    			<th>No.</th>
+			    			<th>Name Company</th>
+			    			<th>Description</th>
+			    			<th>Admin Company</th>
+			    			<th>Action</th>
 
+			    		</tr>
+			    	</thead>
+			    	<tbody>
 
-					</tr>
-				<?php 
-				
-				foreach($users as $user){
+	    		 <?php $no_=1; ?>
+			    	@foreach($company as $data)
 
-					if(!isset($arr[$user->permission]) ){
+			    		<tr>
+			    			<td>{{$no_++}}</td>
+			    			<td>{{$data->name}}</td>
+			    			<td>{{$data->description}}</td>
+			    			<td>{{$data->email}}</td>
 
-						$arr[$user->permission] = [
-							'count' => $user->count_login,
-							'name' 	=> $user->name,
-							'email'	=> $user->email,
-							'login' => $user->count_login];
+			    		
+			    			<td>
+				          		<form class="" action="{{route('deletecompany')}}" method="get">
+						            <input type="hidden" name="id_company" value="{{$data->id_company}}">
+						            <input type="hidden" name="id_admin" value="{{$data->id}}">
+						            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+						            <a href="{{route('editcompany',['name' =>$data->name,'description' =>$data->description,'email' =>$data->email,'id_company' =>$data->id_company,'id_admin' =>$data->id])}}" class="btn btn-primary">Edit</a>
+						            <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete this data');" name="name" value="Delete">
 
+				            	</form>
+			          		</td>
 
-					}elseif($arr[$user->permission]['count'] < $user->count_login){
-						$arr[$user->permission] = [
-							'count' => $user->count_login,
-							'name' 	=> $user->name,
-							'email'	=> $user->email,
-							'login' => $user->count_login];
-					}
-				}	
+			    		</tr>
 
-				ksort($arr);
-				foreach ($arr as $key => $value) {
-				?>
-				
-						<tr>
-							<td>{{$key}}</td>
-							<td>{{$value['name']}}</td>
-							<td>{{$value['email']}}</td>
-							<td>{{$value['login']}}</td>
-						</tr>
-				<?php 		
-					}	
-				?>
+			    	@endforeach	
+			    	</tbody>
+			    </table>
 
-			</table>
 
 
 	@endsection			        
