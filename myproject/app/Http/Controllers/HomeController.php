@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use App\Users;
-use App\Roles;
+// use App\Roles;
 use Illuminate\Support\Facades\Redirect;
 use DB;
+use App\Company;
 
 class HomeController extends Controller
 {
@@ -18,52 +19,36 @@ class HomeController extends Controller
     }
     // ROLe 1 : ADMIN
     public function index(){
+        // dd(Auth::user());
 
-        // $users = Users::all();
+        // $data = DB::table('users')
+        //     ->join('company', 'users.id_company', '=', 'company.id_company')
+           
+        //     ->select('users.*', 'company.name as company_name','company.description')
+        //     ->get();
+        $data  = DB::table('users')->select('users.*','company.name as name_company','company.description')
+            ->join('company', function ($join) {
+                $join->on('users.id_company', '=', 'company.id_company')
+                     ->where('users.role', '=', 2);
+                 
+            })->get();
 
-        $users = DB::table('users')
-            ->join('roles', 'users.id', '=', 'roles.id')
-            ->select('users.*', 'roles.permission','roles.count_login')
-            ->get();
-
-        $company = DB::table('company')
-            ->join('usercompany', 'usercompany.id_company', '=', 'company.id_company')
-            ->join('users', 'users.id', '=', 'usercompany.id_user')
-            ->select('users.id','users.email','company.*' )
-            ->get();    
-
-
-       
-
-    	return view('home',['users'=>$users,'company'=> $company]);
+    	return view('home',['company'=>$data]);
 
     }
 
-    // ROLE 2
+// Admin Company
+    public function AdminCompany($id_company){
 
-    public function index_role2(){
-        
-        return view('role2');
+        $users_company = DB::table('users')
+                ->where('role', '=', 4)
+                ->where('id_company','=', $id_company)
+                ->get();
 
-    }
+        $company = DB::table('company')->where('id_company', $id_company)->first();
 
-    // ROLE 3
 
-    public function index_role3(){
-        
-        return view('role3');
-
-    }
-
-     // ROLE 4
-
-    public function not_admin(){
-         $users = DB::table('users')
-            ->join('roles', 'users.id', '=', 'roles.id')
-            ->select('users.*', 'roles.permission','roles.count_login')
-            ->get();
-
-        return view('not_admin',['users'=>$users]);
+      return view('admincompany.home',compact('company','users_company'));
 
     }   
 
@@ -92,10 +77,10 @@ class HomeController extends Controller
         
     }
 
-
-
     public function destroy($id)
     {
+        $id_company = DB::table('usercompany')->where('id_user', $id)->value('id_company');
+
         $user = Users::findOrFail($id);
         $user->delete();
 
@@ -104,7 +89,6 @@ class HomeController extends Controller
 
         DB::table('usercompany')->where('id_user', '=', $id)->delete();
 
-        $id_company = DB::table('usercompany')->where('id_user', $id)->value('id_company');
         
         DB::table('company')->where('id_company', '=', $id_company)->delete();
 
@@ -113,8 +97,9 @@ class HomeController extends Controller
 
 
       public function getLogout(){
+        
         Auth::logout();
-        return redirect('login');
+        return redirect()->route('login');
     }
 
 

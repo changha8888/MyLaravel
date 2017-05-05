@@ -7,30 +7,26 @@ use DB;
 use Validator;
 use App\Company;
 use Roles;
+use App\Users;
 
 class CompanyController extends Controller
 {
     
     public function addCompany(){
 
-    $data =	DB::table('users')
-        ->join('roles', function ($join) {
-            $join->on('users.id', '=', 'roles.id')
-                 ->where('roles.permission', '=', 4);
-        })
-        ->get();
-
-    	return view('company.add',['data'=>$data]);
+    	return view('company.add');
     }
-
 
 
     public function registerCompany(Request $request){
 
     	$rules = [
-     		'name'             => 'required:min:8',
-    		'description'      => 'required',
-    		'admin'            => 'required',
+     		'company_name'             => 'required',
+    		'company_description'      => 'required',	
+            'admin_name'               => 'required',
+            'admin_email'              => 'required|email',
+            'password'                 => 'required|min:6',
+            'password_confirm'         => 'required|same:password'
           
     	];
     	
@@ -42,95 +38,215 @@ class CompanyController extends Controller
 
         }else{
 
-        	$name 			= $request->input('name');
-        	$description 	= $request->input('description');
-        	$id_admin 		= $request->input('admin');
 
-        }
 
-        // Add company
+        	$company_name          = $request->input('company_name');
+        	$company_description   = $request->input('company_description');
+        	$admin_name 		   = $request->input('admin_name');
+            $admin_email           = $request->input('admin_email');
+            $password              = $request->input('password');
 
-			$id = DB::table('company')->insertGetId( 
-                    array(
-                        'name' => $name,
-                        'description' => $description,
-                        )
-                );
-		//Add user company	
 
-     		  DB::table('usercompany')->insert(['id_user' => $id_admin, 'id_company' => $id]);
+            $user = Users::where('email', '=', $admin_email)->first();
 
-     	//Update role 
+            if($user == null){
 
-     		  DB::table('roles')->where('id', $id_admin)->update(['permission' => 2]);
-		   
-     		  return redirect()->route('home')->with('message','Add Company Success !!!');
+                // Add company
+
+    			$id = DB::table('company')->insertGetId( 
+                        array(
+                            'name'          => $company_name,
+                            'description'   => $company_description,
+                            )
+                    );
+
+    		    // Add admin company	
+
+         		  DB::table('users')->insert([
+
+                        'name'          => $admin_name, 
+                        'email'         => $admin_email,
+                        'password'      => bcrypt($password),
+                        'role'          => 2,
+                        'id_company'    => $id
+                    ]);
+                  
+
+         		  return redirect()->route('home')->with('message','Add Company Success !!!');
+            }else{
+
+                return redirect()->back()->with('message_fail', 'exist'); 
+            }      
+        }      
 
     }
 
-    public function editCompany(Request $request){
+    public function viewCompany($id_company){
 
-		
-		$data = $request->all();
-
+        $user_company = DB::table('users')->where('id_company', $id_company)->get();
 
 
-		 $user =	DB::table('users')
-        ->join('roles', function ($join) {
-            $join->on('users.id', '=', 'roles.id')
-                 ->where('roles.permission', '=', 4);
-        })
-        ->get();
-		
+return view('company.view',compact('user_company'));
+    }    
 
-		return view('company.edit',compact('data','user'));
+    public function editCompany($id_company){
+
+
+    $company = DB::table('company')->where('id_company', $id_company)->first();
+
+		return view('company.edit',compact('company'));
 
     }
 
     public function updateCompany(Request $request){
-    	// dd($request->all());
 
-    	// echo $request->id_company;
-    	DB::table('company')
-            ->where('id_company', $request->id_company)
-            ->update([
+    	$rules = [
+     		'name'             => 'required',
+    		'description'      => 'required',          
+    	];
 
-            	'name' => $request->name,
-            	'description' => $request->description
+    	$validator = Validator::make($request->all(),$rules);
 
-            	]);
-        if($request->admin != $request->id_admin_cur ){
+        if($validator->fails()){
 
-        	DB::table('usercompany')
-            ->where('id_company', $request->id_company)
-            ->update(['id_user' => $request->admin]);
+            return redirect()->back()->withErrors($validator);
 
-            DB::table('roles')
-            ->where('id', $request->admin)
-            ->update(['permission' => 2]);
+        }else{
+    	
+	    	DB::table('company')
+	            ->where('id_company', $request->id_company)
+	            ->update([
 
-            DB::table('roles')
-            ->where('id', $request->id_admin_cur)
-            ->update(['permission' => 4]);
+	            	'name' => $request->name,
+	            	'description' => $request->description
 
-
-        }
-        return redirect()->route('home');
-    	// dd($request->all());
+	            	]);
+	       
+	        return redirect()->route('home')->with('message','Edit Company Success !!!');
+    	
+	    }    
+        
     }
 
 
-    public function deleteCompany(Request $request){
-    	
-    	DB::table('company')->where('id_company', '=', $request->id_company)->delete();
-    	DB::table('usercompany')->where('id_company', '=', $request->id_company)->delete();
-    	DB::table('roles')->where('id', $request->id_admin)->update(['permission' => 4]);
-    	// $company = Company::findOrFail($request->id_company);
-     //    $company->delete();
+    public function deleteCompany($id_company){
 
+    	DB::table('company')->where('id_company', '=', $id_company)->delete();
+        DB::table('users')->where('id_company', '=', $id_company)->delete();
 
-    	// dd($request->all());
 
     	return redirect()->back();
     }
+
+    public function RegisterUserCompany($id_company){
+
+
+        return view('admincompany.register',compact('id_company'));
+    }
+
+    public function postRegisterUserCompany(Request $request){
+
+        $rules = [
+            'name'                => 'required',
+            'email'               => 'required|email',
+            'password'            => 'required|min:6',
+            'password_confirm'    => 'required|same:password'
+
+        ];
+        
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails()){
+
+            return redirect()->back()->withErrors($validator);
+
+        }else{    
+
+
+            $id_company         = $request->input('id_company');
+            $name               = $request->input('name');
+            $email              = $request->input('email');
+            $password           = $request->input('password');
+
+            $user = Users::where('email', '=', $email)->first();
+            
+            if($user == null){ 
+
+                DB::table('users')->insert([
+
+                        'name'          => $name, 
+                        'email'         => $email,
+                        'password'      => bcrypt($password),
+                        'role'          => 4,
+                        'id_company'    => $id_company
+                    ]);
+
+               return redirect()->route('admin_company', ['id_company' =>  $id_company ])->with('message','Register Success !!!');
+            }else{
+
+                return redirect()->back()->with('message_fail', 'exist');
+            }  
+            
+        }    
+
+    }
+
+
+    public function editUserCompany(Request $request){
+      
+        $id_user    = $request->input('id_user');
+        $id_company = $request->input('id_company');
+
+        $user = DB::table('users')->where('id', $id_user)->first();
+
+
+        return view('admincompany.edit',compact('id_user','id_company','user'));
+
+    }
+
+    public function updateUserCompany(Request $request){
+
+     
+        $rules = [
+            'name'                => 'required',
+            'email'               => 'required|email',
+            'password'            => 'required|min:6',
+            'password_confirm'    => 'required|same:password'
+
+        ];
+        
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails()){
+
+            return redirect()->back()->withErrors($validator);
+
+        }else{
+
+            $name       = $request->input('name');
+            $email      = $request->input('email');
+            $password   = $request->input('password');
+            $id_user    = $request->input('id_user');
+            $id_company    = $request->input('id_company');
+
+
+            DB::table('users')
+            ->where('id', $id_user)
+            ->update(['name' => $name , 'email' => $email ,'password' =>bcrypt($password)]);
+
+            return redirect()->route('admin_company', ['id_company' =>  $id_company ])->with('message','Update User Success !!!');
+        }   
+       
+    }
+
+    public function deleteUserCompany(Request $request){
+
+    $id_user = $request->input('id_user');
+
+    DB::table('users')->where('id', '=', $id_user)->delete();
+
+        return redirect()->back();
+    }
+
+
 }

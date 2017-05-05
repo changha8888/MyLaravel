@@ -20,34 +20,43 @@ $router->group(['middleware' => 'locale'], function($router)
 Route::get('login',['as' => 'login','uses'=>'LoginController@getLogin']);
 Route::post('login','LoginController@postLogin');
 
-Route::get('register','LoginController@getRegister');
-Route::post('register','LoginController@postRegister');
+// Route::get('register','LoginController@getRegister');
+// Route::post('register','LoginController@postRegister');
 
 Route::get('logout','HomeController@getLogout');
 
 
-Route::resource('/home', 'HomeController');
+// Route::resource('/home', 'HomeController');
 
-Route::get('login/{locale}','LanguageController@login_trans');
-Route::get('register/{locale}','LanguageController@register_trans');
 
 Route::get('/',['as' => 'home', 'uses' => 'HomeController@index']);
-Route::get('role2',['as' => 'role2', 'uses' => 'HomeController@index_role2']);
-Route::get('role3',['as' => 'role3', 'uses' => 'HomeController@index_role3']);
-Route::get('role4',['as' => 'role4', 'uses' => 'HomeController@index_role4']);
 
 
-Route::get('not_admin',['as' => 'not_admin', 'uses' => 'HomeController@not_admin']);
-
+Route::get('admin_company/{id_company}',['as' => 'admin_company', 'uses' => 'HomeController@AdminCompany']);
 
 Route::get('lang/set',['as'=> 'setlang' ,'uses'=>'LanguageController@set_lang']);
 
 Route::get('addcompany',['as'=> 'addcompany','uses'=>'CompanyController@addcompany']);
 Route::post('registercompany',['as'=> 'registercompany','uses'=>'CompanyController@registerCompany']);
 
-Route::get('editcompany',['as'=> 'editcompany','uses'=>'CompanyController@editCompany']);
+
+Route::get('viewcompany/{id_company}',['as'=> 'viewcompany','uses'=>'CompanyController@viewCompany']);
+
+Route::get('editcompany/{id_company}',['as'=> 'editcompany','uses'=>'CompanyController@editCompany']);
 Route::post('updatecompany',['as'=> 'updatecompany','uses'=>'CompanyController@updateCompany']);
-Route::get('deletecompany',['as'=> 'deletecompany','uses'=>'CompanyController@deleteCompany']);
+
+Route::get('deletecompany/{id_company}',['as'=> 'deletecompany','uses'=>'CompanyController@deleteCompany']);
+
+Route::get('register/{id_company}',['as'=> 'register','uses'=>'CompanyController@RegisterUserCompany']);
+
+Route::post('postregister',['as'=> 'postregister','uses'=>'CompanyController@postRegisterUserCompany']);
+
+Route::get('edituser',['as'=> 'edituser','uses'=>'CompanyController@editUserCompany']);
+
+Route::post('updateuser',['as'=> 'updateuser','uses'=>'CompanyController@updateUserCompany']);
+
+Route::get('deleteuser',['as'=> 'deleteuser','uses'=>'CompanyController@deleteUserCompany']);
+
 
 });
 
@@ -57,35 +66,51 @@ Route::get('search','SearchController@index');
 Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 
 
-
 Route::get('abc',function(){
+// $data  = DB::table('users')->select('users.*','company.name as name_company')
+//         ->join('company', function ($join) {
+//             $join->on('users.id_company', '=', 'company.id_company')
+//                  ->where('users.role', '=', 2);
+                 
+//         })
+//         ->get();
 
 
-$subQuery = DB::table('roles')->select(['permission', DB::raw('max(count_login) as max')])->groupBy('permission');
+	  $data = DB::table('users')->where('id_company', 2)->get();
 
-$data = DB::table('users')->select( '*' )
-	->join('roles', 'users.id', '=', 'roles.id')
-	->join(DB::raw('(' . $subQuery->toSql() . ') sub'), function($join) {
-		$join->on('sub.permission', '=', 'roles.permission');
-		$join->on('sub.max', '=', 'roles.count_login');
-	})->get();
+dd($data);
+// $subQuery = DB::table('roles')->select(['permission', DB::raw('max(count_login) as max')])->groupBy('permission');
 
-
-// dd($data);
-
-
- $company = DB::table('company')
-            ->join('usercompany', 'usercompany.id_company', '=', 'company.id_company')
-            ->join('users', 'users.id', '=', 'usercompany.id_user')
-            ->select('users.email','company.*' )
-            ->get();    
-
-$id_company = DB::table('usercompany')->where('id_user', 6)->value('id_company');
+// $data = DB::table('users')->select( '*' )
+// 	->join('roles', 'users.id', '=', 'roles.id')
+// 	->join(DB::raw('(' . $subQuery->toSql() . ') sub'), function($join) {
+// 		$join->on('sub.permission', '=', 'roles.permission');
+// 		$join->on('sub.max', '=', 'roles.count_login');
+// 	})->get();
 
 
-echo $id_company;
+// // dd($data);
+
+//  $company = DB::table('company')
+//             ->join('usercompany', 'usercompany.id_company', '=', 'company.id_company')
+//             ->join('users', 'users.id', '=', 'usercompany.id_user')
+//             ->select('users.email','company.*' )
+//             ->get(); 
+
+
 });
 
+
+Route::get('test',['as'=>'test','uses'=>'SearchController@TestController']);
+
+Route::get('button',['as'=>'button','uses'=>'SearchController@ButtonController']);
+
+Route::get('testlang',['as'=>'testlang','uses'=>'SearchController@LangController']);
+
+
+
+
+// Route::get()
 
 // select a.name, a.email, b.permission, b.count_login from users a INNER JOIN roles b ON a.id = b.id INNER JOIN (select permission, MAX(count_login)as max from roles group by permission) c ON b.permission = c.permission AND b.count_login = c.max ;
 

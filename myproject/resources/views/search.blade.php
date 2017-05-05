@@ -49,6 +49,9 @@
 		
 			<button type="submit" class="btn btn-primary">Submit</button>
 		</form> -->
+
+			<h2>{{ __('language.name') }}</h2>
+			
 	<div class="container-fluid">
 		<br><br><br>
 		<div class="row">
@@ -61,53 +64,79 @@
 
 		</div>
 
-
-
-
 	</div>
 
 
-<!-- <p class="click">hover </p>
+
+<form method="get" id='testlang' action="{{route('testlang')}}">
+
+	<select name="lang" id="lang" class="lang" required="required" onchange="$('#testlang').submit();">
+		<option @if (App::getLocale() == 'en') selected="selected" @endif value="en">EN</option>
+
+		<option @if (App::getLocale() == 'jp') selected="selected" @endif value="jp">JP</option>
+	</select>
+
+</form>	
+
+
+<h2>{{App::getLocale()}}</h2>
+
+<?php $a = 5; ?>
+
+<!-- <a class="btn btn-default" href="{{route('button',['data'=>$a])}}" role="button">button</a>
+
+<p class="click">hover </p>
 
 <h2 class="hi"> test </h2> -->
-<button type="button" class="btn btn-info">button</button>
-<button type="button" class="btn btn-primary">button</button>
-<button type="button" class="btn btn-default">button</button>
+
 
 		<!-- jQuery -->
 		
 
 		<script type="text/javascript">
 
-		$('.cls_input').keyup(function(){
+		// $('.cls_input').keyup(function(){
 
-			var data = $('.cls_input').val();
+		// 	var data = $('.cls_input').val();
 
-			console.log(data);
-		});
+		// 	console.log(data);
 
-// $('.click').hover(function(){
-// 	 $('.hi').addClass("hien");
+		// });
 
-// },function(){
-// 	$('.hi').removeClass("hien");
+
+
+// $('.lang').click(function(){
+
+// 	var abc = $('.lang').val();
+// 	// console.log(abc);
+// 	$.ajax({
+// 		type:'get',
+// 		url:'testlang',
+// 		data: {'lang_ajax':abc},
+// 		success:function(data){
+// 			console.log(data);
+// 		}
+// 	});
 // });
+
+
 
 // $('.click').hover(
 // 	function(){
-// 		alert('fasdfasd');
-// 		// $('.hi').addClass("hien");
+// 		// alert('fasdfasd');
+// 		$('.hi').addClass("hien");
+		
 // 	},
 // 	function(){
 // 		$('.hi').removeClass("hien");
-// 	},
+		
+// 	}
 
 
 // 	);
 
 
 
-$()
 
 		// $(document).ready(function(){
 

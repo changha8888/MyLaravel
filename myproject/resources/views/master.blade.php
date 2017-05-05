@@ -62,7 +62,7 @@
 				 	@else
 
 				 	<li><a href="{{ url('login') }}">{{ __('language.login') }}</a></li>
-					<li><a href="{{ url('register') }}">{{ __('language.register') }}</a></li>
+					<!-- <li><a href="{{ url('register') }}">{{ __('language.register') }}</a></li> -->
 
 					@endif
 				</ul>

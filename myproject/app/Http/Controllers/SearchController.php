@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Input;
+use URL;
+use session;
 
 class SearchController extends Controller
 {
@@ -41,4 +43,54 @@ $name = Input::get('name');
 
 // 		dd( $custommers );
     }
+
+
+
+public function TestController(){
+
+return view('search');
+}
+
+public function ButtonController(Request $abc){
+
+
+dd($abc->all());
+
+
+}
+
+public function LangController(Request $request){
+
+
+
+
+$value =  $request->input('lang');
+session(['lang_session' => $value]);
+$abv = session('lang_session');
+
+
+\App::setLocale($abv);
+ 
+return redirect()->back();
+
+
+	// $lang = Input::get('lang_ajax');
+
+	//  session(['lang_session' => $lang]);
+	//  $value = session('lang_session');
+
+	// \App::setLocale($value);
+
+	// echo $value;
+
+	// return \App::getLocale();
+	// echo 'fasdfsadf';
+
+// \App::setLocale($lang);
+
+// return redirect(url(URL::previous()));
+}
+
+
+
 }

@@ -7,7 +7,7 @@ use Validator;
 use Auth;
 use Illuminate\Support\MessageBag;
 use App\Users;
-use App\Roles;
+// use App\Roles;
 
 use DB;
 
@@ -52,22 +52,20 @@ class LoginController extends Controller
 
     		if( Auth::attempt(['email' => $email,'password' => $password], $remember)){
 
-                $id_user        = Users::where('email',$request->email)->first()->id;
-                $count_login    = Roles::where('id',$id_user)->first()->count_login;
-                $role           = Roles::where('id',$id_user)->first()->permission;
-                
-    
+                $role        = Users::where('email',$request->email)->first()->role;
+                $id_company        = Users::where('email',$request->email)->first()->id_company;
 
-                    DB::table('roles')
-                        ->where('id',$id_user )
-                        ->update(['count_login' => $count_login + 1 ]);
+               
+                
 
                 if($role == 1){
 
-                    return redirect()->intended('/');
+                    return redirect()->route('home');
 
-                }else{
-                    return redirect()->intended('/not_admin');
+                }
+                if($role == 2){
+                    return redirect()->route('admin_company',['id_company'=>$id_company]);
+                   
                 }
 
             
