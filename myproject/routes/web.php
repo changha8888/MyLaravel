@@ -29,7 +29,7 @@ Route::get('logout','HomeController@getLogout');
 // Route::resource('/home', 'HomeController');
 
 
-Route::get('/',['as' => 'home', 'uses' => 'HomeController@index']);
+Route::get('/',['as' => 'home', 'uses' => 'HomeController@index'])->middleware('checkrole');
 
 
 Route::get('admin_company/{id_company}',['as' => 'admin_company', 'uses' => 'HomeController@AdminCompany']);
@@ -58,6 +58,8 @@ Route::post('updateuser',['as'=> 'updateuser','uses'=>'CompanyController@updateU
 Route::get('deleteuser',['as'=> 'deleteuser','uses'=>'CompanyController@deleteUserCompany']);
 
 
+Route::get('normaluser/{id}',['as'=> 'normaluser','uses'=>'CompanyController@NormalUser']);
+
 });
 
 
@@ -76,7 +78,14 @@ Route::get('abc',function(){
 //         ->get();
 
 
-	  $data = DB::table('users')->where('id_company', 2)->get();
+	  // $data = DB::table('users')->where('id_company', 2)->get();
+
+	$data = DB::table('users')
+            ->join('company', 'users.id_company', '=', 'company.id_company')
+           	->where('users.id_company', '=', 2)
+           	->where('users.role', '=', 2)
+            ->select('*')
+            ->get();
 
 dd($data);
 // $subQuery = DB::table('roles')->select(['permission', DB::raw('max(count_login) as max')])->groupBy('permission');

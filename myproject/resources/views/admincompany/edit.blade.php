@@ -50,7 +50,6 @@
 					
 						{{csrf_field()}}
 
-						
 
 						<button type="submit" class="btn btn-primary">Save</button>
 
@@ -70,8 +69,7 @@
 				</div>
 			</div>
 		</div>
-}
-}
+
 
 
 

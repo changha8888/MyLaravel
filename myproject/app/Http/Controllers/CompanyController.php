@@ -92,8 +92,14 @@ return view('company.view',compact('user_company'));
     public function editCompany($id_company){
 
 
-    $company = DB::table('company')->where('id_company', $id_company)->first();
+    // $company = DB::table('company')->where('id_company', $id_company)->first();
 
+    $company = DB::table('users')
+            ->join('company', 'users.id_company', '=', 'company.id_company')
+            ->where('users.id_company', '=', $id_company)
+            ->where('users.role', '=', 2)
+            ->select('*')
+            ->get();
 		return view('company.edit',compact('company'));
 
     }
@@ -102,7 +108,8 @@ return view('company.view',compact('user_company'));
 
     	$rules = [
      		'name'             => 'required',
-    		'description'      => 'required',          
+    		'description'      => 'required',
+            'email'             => 'required|email',           
     	];
 
     	$validator = Validator::make($request->all(),$rules);
@@ -121,6 +128,14 @@ return view('company.view',compact('user_company'));
 	            	'description' => $request->description
 
 	            	]);
+            DB::table('users')
+                ->where('id_company', $request->id_company)
+                ->where('role', 2)
+                ->update([
+
+                    'email' => $request->email,
+
+                    ]);    
 	       
 	        return redirect()->route('home')->with('message','Edit Company Success !!!');
     	
@@ -246,6 +261,18 @@ return view('company.view',compact('user_company'));
     DB::table('users')->where('id', '=', $id_user)->delete();
 
         return redirect()->back();
+    }
+
+    public function NormalUser($id){
+
+         $user = DB::table('users')
+            ->join('company', 'users.id_company', '=', 'company.id_company')
+            ->where('users.id', '=', $id)
+            ->select('users.*','company.description','company.name as name_com')
+            ->get();
+
+
+        return view('normaluser',compact('user'));
     }
 
 

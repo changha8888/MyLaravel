@@ -50,6 +50,9 @@
 				</li>
 
 
+
+
+
 					@if(Auth::check())
 					
 						<li class="dropdown">
@@ -58,7 +61,7 @@
 								<li><a href="{{url('logout')}}">{{__('language.logout')}}</a></li>	
 							</ul>
 						</li>
-
+						
 				 	@else
 
 				 	<li><a href="{{ url('login') }}">{{ __('language.login') }}</a></li>

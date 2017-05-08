@@ -52,9 +52,9 @@ class LoginController extends Controller
 
     		if( Auth::attempt(['email' => $email,'password' => $password], $remember)){
 
-                $role        = Users::where('email',$request->email)->first()->role;
-                $id_company        = Users::where('email',$request->email)->first()->id_company;
-
+                $role           = Users::where('email',$request->email)->first()->role;
+                $id_company     = Users::where('email',$request->email)->first()->id_company;
+                $id_user        = Users::where('email',$request->email)->first()->id;
                
                 
 
@@ -65,6 +65,11 @@ class LoginController extends Controller
                 }
                 if($role == 2){
                     return redirect()->route('admin_company',['id_company'=>$id_company]);
+                   
+                }
+
+                if($role == 4){
+                    return redirect()->route('normaluser',['id'=>$id_user]);
                    
                 }
 

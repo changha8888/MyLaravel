@@ -20,6 +20,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         // \Illuminate\Session\Middleware\StartSession::class,
         \App\Http\Middleware\Locale::class,
+        \App\Http\Middleware\CheckRole::class,
         
 
     ];
@@ -61,6 +62,7 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'locale' => \App\Http\Middleware\Locale::class,
+        'checkrole' => \App\Http\Middleware\CheckRole::class,
 
     ];
 }
