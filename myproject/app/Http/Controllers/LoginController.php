@@ -27,6 +27,29 @@ class LoginController extends Controller
     
     }
 
+     public function apiLogin(Request $request) {
+
+        
+        $email      = $request->input('email');
+        $password   = $request->input('password');
+        
+
+        $user = Users::where('email', $email)->first();
+        
+
+        if (!\Hash::check($password, $user->password)) {
+            return response(['error' => 'No user found!'], 400); 
+        }
+        
+        $user->api_token = hash_hmac('sha256', str_random(40), config('app.key'));
+        $user->save();
+
+        return response(['token' => $user->api_token], 200);
+    }
+
+
+
+
     public function postLogin(Request $request){
 
 
@@ -83,53 +106,53 @@ class LoginController extends Controller
 
 
 
-    public function postRegister(Request $request){
+    // public function postRegister(Request $request){
 
-     	$rules = [
-     		'name'                => 'required',
-    		'email'               => 'required|email',
-    		'password'            => 'required|min:6',
-            'password_confirm'    => 'required|same:password'
+    //  	$rules = [
+    //  		'name'                => 'required',
+    // 		'email'               => 'required|email',
+    // 		'password'            => 'required|min:6',
+    //         'password_confirm'    => 'required|same:password'
 
-    	];
+    // 	];
     	
-    	$validator = Validator::make($request->all(),$rules);
+    // 	$validator = Validator::make($request->all(),$rules);
 
-        if($validator->fails()){
+    //     if($validator->fails()){
 
-            return redirect()->back()->withErrors($validator);
-        }    
+    //         return redirect()->back()->withErrors($validator);
+    //     }    
 
-    	else{
+    // 	else{
 
-    		// $users = new Users;
+    // 		// $users = new Users;
 
-    		// $users->name      = $request->name;
-    		// $users->email     = $request->email;
-    		// $users->password  = bcrypt($request->password);
-    		// $users->save();
-            $user = Users::where('email', '=', $request->email)->first();
-            if ($user === null) {
-                $id = DB::table('users')->insertGetId( 
-                    array(
-                        'name' => $request->name,
-                        'email' => $request->email,
-                        'password'=> bcrypt($request->password),
-                        )
-                );
+    // 		// $users->name      = $request->name;
+    // 		// $users->email     = $request->email;
+    // 		// $users->password  = bcrypt($request->password);
+    // 		// $users->save();
+    //         $user = Users::where('email', '=', $request->email)->first();
+    //         if ($user === null) {
+    //             $id = DB::table('users')->insertGetId( 
+    //                 array(
+    //                     'name' => $request->name,
+    //                     'email' => $request->email,
+    //                     'password'=> bcrypt($request->password),
+    //                     )
+    //             );
 
-                DB::table('roles')->insert(['id' => $id, 'permission' => 4]);
+    //             DB::table('roles')->insert(['id' => $id, 'permission' => 4]);
 
-                return redirect('login')->with('message','Register Success !!!');
+    //             return redirect('login')->with('message','Register Success !!!');
 
-            } else {
+    //         } else {
 
-                return redirect()->back()->with('message_fail', 'exist');
-            }    
+    //             return redirect()->back()->with('message_fail', 'exist');
+    //         }    
 
-    	}
+    // 	}
 	
-    }
+    // }
 
 
     // public function getLogout(){

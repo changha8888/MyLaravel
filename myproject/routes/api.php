@@ -13,6 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::post('login', 'LoginController@apiLogin');
+
+Route::get('testAuth3', function () {
+		dd('ko auth van vao dc');
+});
+Route::group(['middleware' => 'auth:api'], function () {
+
+	Route::get('role',function(){
+	dd(auth('api')->user()->role);
+	});
+
+	Route::get('testAuth', function () {
+		dd('auth moi vao day');
+	});
+	
 });
