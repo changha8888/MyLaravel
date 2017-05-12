@@ -29,7 +29,7 @@ class LoginController extends Controller
 
      public function apiLogin(Request $request) {
 
-        
+
         $email      = $request->input('email');
         $password   = $request->input('password');
         

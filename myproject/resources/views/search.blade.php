@@ -95,6 +95,10 @@
 
 		<script type="text/javascript">
 
+
+
+		$('')
+
 		// $('.cls_input').keyup(function(){
 
 		// 	var data = $('.cls_input').val();

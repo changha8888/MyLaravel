@@ -25,6 +25,14 @@ Route::post('login','LoginController@postLogin');
 
 Route::get('logout','HomeController@getLogout');
 
+Route::get('forgot-password','ForgotPasswordController@forgotPassword');
+
+Route::post('forgot-password',['as' =>'forgot-password','uses'=> 'ForgotPasswordController@postForgotPassword']);
+
+Route::get('/reset/{email}/{code}','ForgotPasswordController@formResetPassword');
+
+Route::post('resetpass',['as'=>'resetpass','uses' =>'ForgotPasswordController@resetPassword']);
+
 
 // Route::resource('/home', 'HomeController');
 

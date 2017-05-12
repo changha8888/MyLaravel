@@ -45,8 +45,14 @@
 
 						</div>
 
+
 						<button type="submit" class="btn btn-primary">{{ __('language.login') }}</button>
+
+						<a class="btn btn-link" href="{{ url('/forgot-password') }}">
+                            Forgot Password?
+                        </a>
 						@if($errors->has('errorlogin'))
+
 						<div class="alert alert-danger">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 							{{$errors->first('errorlogin')}}
