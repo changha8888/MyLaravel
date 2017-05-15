@@ -49,7 +49,7 @@
 						<button type="submit" class="btn btn-primary">{{ __('language.login') }}</button>
 
 						<a class="btn btn-link" href="{{ url('/forgot-password') }}">
-                            Forgot Password?
+                            {{ __('language.forgot_password') }}
                         </a>
 						@if($errors->has('errorlogin'))
 

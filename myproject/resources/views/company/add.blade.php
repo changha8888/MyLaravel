@@ -7,21 +7,21 @@
 	
 	<form action="{{url('registercompany')}}" method="POST" role="form">
 		<div class="col-md-6">
-			<legend>Company</legend>
+			<legend>{{ __('language.company') }}</legend>
 
 		
 				<div class="form-group">
-					<label for="">Name</label>
-					<input type="text" name="company_name" class="form-control" id="company_name" placeholder="Company name">
+					<label for="">{{ __('language.name') }}</label>
+					<input type="text" name="company_name" class="form-control" id="company_name" placeholder="{{ __('language.name_company') }}">
 					@if($errors->has('company_name'))
 							<p style="color:red">{{$errors->first('company_name')}}</p>
 					@endif	
 				</div>
 
 				<div class="form-group">
-					<label for="">Description</label>
+					<label for="">{{ __('language.description') }}</label>
 					
-					<textarea name="company_description" id="company_description" class="form-control" rows="3" placeholder="Description company"></textarea>
+					<textarea name="company_description" id="company_description" class="form-control" rows="3" placeholder="{{ __('language.description') }}"></textarea>
 					@if($errors->has('company_description'))
 							<p style="color:red">{{$errors->first('company_description')}}</p>
 					@endif	
@@ -32,33 +32,33 @@
 			</div>
 
 			<div class="col-md-6">
-				<legend>Admin Company</legend>
+				<legend>{{ __('language.admin_company') }}</legend>
 
 				
 				<div class="form-group">
-					<label for="">Admin Name</label>
-					<input type="text" name="admin_name" class="form-control" id="admin_name" placeholder="Admin name">
+					<label for="">{{ __('language.admin_name') }}</label>
+					<input type="text" name="admin_name" class="form-control" id="admin_name" placeholder="{{ __('language.admin_name') }}">
 					@if($errors->has('admin_name'))
 							<p style="color:red">{{$errors->first('admin_name')}}</p>
 					@endif	
 				</div>
 				<div class="form-group">
-					<label for="">Admin Email</label>
-					<input type="text" name="admin_email" class="form-control" id="admin_email" placeholder="Admin Email">
+					<label for="">{{ __('language.email') }}</label>
+					<input type="text" name="admin_email" class="form-control" id="admin_email" placeholder="{{ __('language.admin_company') }}">
 					@if($errors->has('admin_email'))
 							<p style="color:red">{{$errors->first('admin_email')}}</p>
 					@endif	
 				</div>
 				<div class="form-group">
-					<label for="">Password</label>
-					<input type="password" name="password" class="form-control" id="password" placeholder="Password">
+					<label for="">{{ __('language.password') }}</label>
+					<input type="password" name="password" class="form-control" id="password" placeholder="{{ __('language.admin_company') }}">
 					@if($errors->has('password'))
 							<p style="color:red">{{$errors->first('password')}}</p>
 					@endif	
 				</div>
 				<div class="form-group">
-					<label for="">Confirm Password</label>
-					<input type="password" name="password_confirm" class="form-control" id="password_confirm" placeholder="Confirm Password">
+					<label for="">{{ __('language.confirm_password') }}</label>
+					<input type="password" name="password_confirm" class="form-control" id="password_confirm" placeholder="{{ __('language.confirm_password') }}">
 					@if($errors->has('password_confirm'))
 							<p style="color:red">{{$errors->first('password_confirm')}}</p>
 					@endif	
@@ -75,7 +75,7 @@
 						@endif	
 
 			</div>
-			<button type="submit" class="btn btn-primary">Add Company</button>
+			<button type="submit" class="btn btn-primary">{{ __('language.create_company') }}</button>
 	</form>
 
 

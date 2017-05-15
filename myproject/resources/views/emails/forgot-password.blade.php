@@ -1,5 +1,5 @@
-<h1> Hello </h1>
+<h1> {{ __('language.hello') }} </h1>
 
-Please click the following link to active your account,
+{{ __('language.mail_reset') }},
 
-<a href="{{ env('APP_URL') }}/reset/{{ $user->email }}/{{$code}}">Click </a>
+<a href="{{ env('APP_URL') }}//reset/{{ $user->email }}/{{$code}}">{{ __('language.click') }}</a>

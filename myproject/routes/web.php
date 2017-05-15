@@ -37,23 +37,23 @@ Route::post('resetpass',['as'=>'resetpass','uses' =>'ForgotPasswordController@re
 // Route::resource('/home', 'HomeController');
 
 
-Route::get('/',['as' => 'home', 'uses' => 'HomeController@index'])->middleware('checkrole');
+Route::get('/',['as' => 'home', 'uses' => 'HomeController@index']);
 
 
-Route::get('admin_company/{id_company}',['as' => 'admin_company', 'uses' => 'HomeController@AdminCompany']);
+Route::get('admin_company/{id_company}',['as' => 'admin_company', 'uses' => 'CompanyController@AdminCompany']);
 
 Route::get('lang/set',['as'=> 'setlang' ,'uses'=>'LanguageController@set_lang']);
 
-Route::get('addcompany',['as'=> 'addcompany','uses'=>'CompanyController@addcompany']);
-Route::post('registercompany',['as'=> 'registercompany','uses'=>'CompanyController@registerCompany']);
+Route::get('addcompany',['as'=> 'addcompany','uses'=>'HomeController@addcompany']);
+Route::post('registercompany',['as'=> 'registercompany','uses'=>'HomeController@registerCompany']);
 
 
-Route::get('viewcompany/{id_company}',['as'=> 'viewcompany','uses'=>'CompanyController@viewCompany']);
+Route::get('viewcompany/{id_company}',['as'=> 'viewcompany','uses'=>'HomeController@viewCompany']);
 
-Route::get('editcompany/{id_company}',['as'=> 'editcompany','uses'=>'CompanyController@editCompany']);
-Route::post('updatecompany',['as'=> 'updatecompany','uses'=>'CompanyController@updateCompany']);
+Route::get('editcompany/{id_company}',['as'=> 'editcompany','uses'=>'HomeController@editCompany']);
+Route::post('updatecompany',['as'=> 'updatecompany','uses'=>'HomeController@updateCompany']);
 
-Route::get('deletecompany/{id_company}',['as'=> 'deletecompany','uses'=>'CompanyController@deleteCompany']);
+Route::get('deletecompany/{id_company}',['as'=> 'deletecompany','uses'=>'HomeController@deleteCompany']);
 
 Route::get('register/{id_company}',['as'=> 'register','uses'=>'CompanyController@RegisterUserCompany']);
 
@@ -122,7 +122,7 @@ Route::get('test',['as'=>'test','uses'=>'SearchController@TestController']);
 
 Route::get('button',['as'=>'button','uses'=>'SearchController@ButtonController']);
 
-Route::get('testlang',['as'=>'testlang','uses'=>'SearchController@LangController']);
+
 
 
 

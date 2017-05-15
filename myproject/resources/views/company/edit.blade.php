@@ -7,10 +7,10 @@
 	<div class="col-md-6">
 		<form action="{{route('updatecompany')}}" method="POST" role="form">
 
-			<legend>Company</legend>
+			<legend>{{ __('language.company') }}</legend>
 
 				<div class="form-group">
-					<label for="">Name Company</label>
+					<label for="">{{ __('language.name_company') }}</label>
 					<input type="text" name="name" class="form-control" id="name" placeholder="Company name" value="{{$company[0]->name}}">
 					@if($errors->has('name'))
 							<p style="color:red">{{$errors->first('name')}}</p>
@@ -18,16 +18,16 @@
 				</div>
 
 				<div class="form-group">
-					<label for="">Description</label>
+					<label for="">{{ __('language.description') }}</label>
 					
-					<textarea name="description" id="description" class="form-control" rows="3" placeholder="Description company">{{$company[0]->description}}</textarea>
+					<textarea name="description" id="description" class="form-control" rows="3" placeholder="{{ __('language.description') }}">{{$company[0]->description}}</textarea>
 					@if($errors->has('description'))
 							<p style="color:red">{{$errors->first('description')}}</p>
 					@endif	
 				</div>
 
 				<div class="form-group">
-					<label for="">Email Admin Company</label>
+					<label for="">{{ __('language.email_admin_company') }}</label>
 					<input type="text" name="email" class="form-control" id="email" value="{{$company[0]->email}}">
 					@if($errors->has('email'))
 							<p style="color:red">{{$errors->first('email')}}</p>
@@ -38,7 +38,7 @@
 
 					{{csrf_field()}}
 
-			<button type="submit" class="btn btn-primary">Save</button>
+			<button type="submit" class="btn btn-primary">{{ __('language.save') }}</button>
 		</form>
 
 	</div>

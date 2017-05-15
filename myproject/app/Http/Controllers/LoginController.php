@@ -21,13 +21,8 @@ class LoginController extends Controller
     	return view('login');
     }
 
-    public function getRegister(){
 
-        return view('register');
-    
-    }
-
-     public function apiLogin(Request $request) {
+    public function apiLogin(Request $request) {
 
 
         $email      = $request->input('email');
@@ -46,8 +41,6 @@ class LoginController extends Controller
 
         return response(['token' => $user->api_token], 200);
     }
-
-
 
 
     public function postLogin(Request $request){
