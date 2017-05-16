@@ -26,7 +26,7 @@ class ForgotPasswordController extends Controller
 
     	if(!$user){
 
-    		return redirect()->back()->with(['message'=>'Email not exist !!!']);
+    		return redirect()->back()->with(['message_fail'=>'Email not exist !!!']);
 
     	}else{
 

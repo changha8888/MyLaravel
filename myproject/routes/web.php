@@ -68,6 +68,11 @@ Route::get('deleteuser',['as'=> 'deleteuser','uses'=>'CompanyController@deleteUs
 
 Route::get('normaluser/{id}',['as'=> 'normaluser','uses'=>'CompanyController@NormalUser']);
 
+Route::get('upload/{id}',['as'=>'upload','uses'=>'CompanyController@upload' ]);
+
+Route::post('importUser',['as'=>'importUser','uses'=>'CompanyController@importUser' ]);
+
+
 });
 
 

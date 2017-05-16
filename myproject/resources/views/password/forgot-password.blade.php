@@ -12,6 +12,18 @@
 
 						@endif
 
+						@if (session('message_fail'))
+
+							<div class="alert alert-danger">
+								
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+								{{session('message_fail')}}
+
+							</div>
+
+						@endif
+
+
 		<div class="container">
 		    <div class="row">
 		        <div class="col-md-8 col-md-offset-2">

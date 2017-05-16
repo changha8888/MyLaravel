@@ -37,20 +37,9 @@
 	</head>
 	<body>
 		
-		<!-- <form action="{{url('result')}}" method="POST" role="form">
-			<legend>Form title</legend>
-		
-			<div class="form-group">
-				<label for="">label</label>
-				<input type="text" class="form-control" id="" placeholder="Input field" name="linh">
-			</div>
-		
-			{{csrf_field()}}
-		
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form> -->
 
-			<h2>{{ __('language.name') }}</h2>
+
+
 			
 	<div class="container-fluid">
 		<br><br><br>
@@ -68,37 +57,14 @@
 
 
 
-<form method="get" id='testlang' action="{{route('testlang')}}">
-
-	<select name="lang" id="lang" class="lang" required="required" onchange="$('#testlang').submit();">
-		<option @if (App::getLocale() == 'en') selected="selected" @endif value="en">EN</option>
-
-		<option @if (App::getLocale() == 'jp') selected="selected" @endif value="jp">JP</option>
-	</select>
-
-</form>	
 
 
-<h2>{{App::getLocale()}}</h2>
-
-<?php $a = 5; ?>
-
-<!-- <a class="btn btn-default" href="{{route('button',['data'=>$a])}}" role="button">button</a>
-
-<p class="click">hover </p>
-
-<h2 class="hi"> test </h2> -->
-
-
-		<!-- jQuery -->
-		
 
 		<script type="text/javascript">
 
 
 
-		$('')
-
+	
 		// $('.cls_input').keyup(function(){
 
 		// 	var data = $('.cls_input').val();

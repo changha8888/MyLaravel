@@ -2,4 +2,6 @@
 
 {{ __('language.mail_reset') }},
 
-<a href="{{ env('APP_URL') }}//reset/{{ $user->email }}/{{$code}}">{{ __('language.click') }}</a>
+<a href=" {{ env('APP_URL') }}//reset/{{ $user->email }}/{{$code}}"> {{ __('language.click') }} </a>
+
+

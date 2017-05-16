@@ -15,13 +15,21 @@
 	
 <div class="container">
 	<div class="row">
-		<form>
+		<div class="col-md-6">
+			<form>
 
-			<legend>{{$company->name}}</legend>
+				<legend>{{$company->name}}</legend>
 
 
-			<a href="{{route('register',$company->id_company)}}" class="btn btn-primary">Register User</a>
-		</form>
+				<a href="{{route('register',$company->id_company)}}" class="btn btn-primary">Register User</a>
+
+				<a href="{{url('upload',$company->id_company)}}" class="btn btn-info">Upload File</a>
+
+			</form>
+
+		</div>
+		
+
 	</div>
 
 	<div class="row">

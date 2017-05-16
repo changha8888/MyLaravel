@@ -8,6 +8,9 @@ use Validator;
 use App\Company;
 use Roles;
 use App\Users;
+use Illuminate\Support\Facades\Input;
+use Excel;
+
 
 class CompanyController extends Controller
 {
@@ -151,6 +154,44 @@ class CompanyController extends Controller
 
 
         return view('normaluser',compact('user'));
+    }
+
+    public function upload($id){
+
+        return view('admincompany.upload',compact('id'));
+    }
+
+    public function importUser(Request $request){
+
+       $file = Input::file('file');
+
+       $file_name = $file->getClientOriginalName();
+
+       $file->move('files',$file_name);
+
+       $results = Excel::load('files/'.$file_name,function($reader){
+
+            $reader->all();
+
+       })->get();
+
+        foreach ($results as $value ) {
+
+            $user = Users::where('email', '=', $value->email)->first();
+            
+           if(!$user){
+
+                DB::table('users')->insert(
+                    ['name' => $value->name, 
+                    'email'  => $value->email,
+                    'password' => bcrypt($value->password),
+                    'role'  => 4,
+                    'id_company'=> $request->input('id') ]);
+           }
+
+        }
+
+        return redirect()->route('admin_company', ['id_company' =>  $request->input('id')])->with('message','Import User Success !!!');
     }
 
 
