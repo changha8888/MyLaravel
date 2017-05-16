@@ -186,6 +186,7 @@ class CompanyController extends Controller
                     'email'  => $value->email,
                     'password' => bcrypt($value->password),
                     'role'  => 4,
+                    
                     'id_company'=> $request->input('id') ]);
            }
 
