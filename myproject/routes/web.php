@@ -33,10 +33,6 @@ Route::get('/reset/{email}/{code}','ForgotPasswordController@formResetPassword')
 
 Route::post('resetpass',['as'=>'resetpass','uses' =>'ForgotPasswordController@resetPassword']);
 
-
-// Route::resource('/home', 'HomeController');
-
-
 Route::get('/',['as' => 'home', 'uses' => 'HomeController@index']);
 
 
@@ -51,6 +47,7 @@ Route::post('registercompany',['as'=> 'registercompany','uses'=>'HomeController@
 Route::get('viewcompany/{id_company}',['as'=> 'viewcompany','uses'=>'HomeController@viewCompany']);
 
 Route::get('editcompany/{id_company}',['as'=> 'editcompany','uses'=>'HomeController@editCompany']);
+
 Route::post('updatecompany',['as'=> 'updatecompany','uses'=>'HomeController@updateCompany']);
 
 Route::get('deletecompany/{id_company}',['as'=> 'deletecompany','uses'=>'HomeController@deleteCompany']);
@@ -64,7 +61,6 @@ Route::get('edituser',['as'=> 'edituser','uses'=>'CompanyController@editUserComp
 Route::post('updateuser',['as'=> 'updateuser','uses'=>'CompanyController@updateUserCompany']);
 
 Route::get('deleteuser',['as'=> 'deleteuser','uses'=>'CompanyController@deleteUserCompany']);
-
 
 Route::get('normaluser/{id}',['as'=> 'normaluser','uses'=>'CompanyController@NormalUser']);
 
@@ -82,6 +78,8 @@ Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 
 
 Route::get('abc',function(){
+
+
 // $data  = DB::table('users')->select('users.*','company.name as name_company')
 //         ->join('company', function ($join) {
 //             $join->on('users.id_company', '=', 'company.id_company')
@@ -100,7 +98,7 @@ Route::get('abc',function(){
             ->select('*')
             ->get();
 
-dd($data);
+// dd($data);
 // $subQuery = DB::table('roles')->select(['permission', DB::raw('max(count_login) as max')])->groupBy('permission');
 
 // $data = DB::table('users')->select( '*' )

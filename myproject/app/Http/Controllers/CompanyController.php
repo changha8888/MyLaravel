@@ -163,37 +163,73 @@ class CompanyController extends Controller
 
     public function importUser(Request $request){
 
-       $file = Input::file('file');
+        $id = $request->input('id');
 
-       $file_name = $file->getClientOriginalName();
+        $file = Input::file('file');
 
-       $file->move('files',$file_name);
+        $file_name = $file->getClientOriginalName();
 
-       $results = Excel::load('files/'.$file_name,function($reader){
+        $file->move('files',$file_name);
+
+        $results = Excel::load('files/'.$file_name,function($reader){
 
             $reader->all();
 
-       })->get();
+        })->get();
 
+       $k = 0;
         foreach ($results as $value ) {
 
-            $user = Users::where('email', '=', $value->email)->first();
+            $k++;
+
+            $email = Users::where('email', '=', $value->email)->value('email');
+            $arr_user = [
+                'name'      => $value->name,
+                'email'     => $value->email,
+                'password'  => $value->password,
+             ];
+
+             $rules = [
+                'name'        => 'required',
+                'email'       => 'required|email',
+                'password'    =>'required|min:6',
+
+            ];
             
-           if(!$user){
+            $validator = Validator::make($arr_user,$rules);
+            
+           if(!$email && !$validator->fails()){
 
                 DB::table('users')->insert(
-                    ['name' => $value->name, 
-                    'email'  => $value->email,
-                    'password' => bcrypt($value->password),
-                    'role'  => 4,
+                    ['name'     => $value->name, 
+                    'email'     => $value->email,
+                    'password'  => bcrypt($value->password),
+                    'role'      => 4,
                     
                     'id_company'=> $request->input('id') ]);
-           }
+           }else{
 
+                if($email == $value->email && $email != null){
+
+                    $record_err[$k] = [
+                        'name'      => $value->name,
+                        'email'     => $value->email,
+                        'password'  => $value->password,
+                        'status'    => 'User was used'
+                    ];
+
+                }else{
+                    
+                    $record_err[$k] = [
+                        'name'      => $value->name,
+                        'email'     => $value->email,
+                        'password'  => $value->password,
+                        'status'    => 'Record error some information'
+                    ];
+                }       
+            }           
         }
 
-        return redirect()->route('admin_company', ['id_company' =>  $request->input('id')])->with('message','Import User Success !!!');
+        return view('admincompany.error',compact('record_err','id'));    
     }
-
-
 }
