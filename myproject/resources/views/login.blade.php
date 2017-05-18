@@ -59,6 +59,11 @@
 						</div>
 						@endif
 					</form>
+
+
+					<a class="btn btn-link" href="{{ url('qrlogin') }}">
+                          LOGIN BY QRCODE
+                        </a>
 				</div>
 			</div>
 		</div>

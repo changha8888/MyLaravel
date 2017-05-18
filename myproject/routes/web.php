@@ -25,6 +25,12 @@ Route::post('login','LoginController@postLogin');
 
 Route::get('logout','HomeController@getLogout');
 
+Route::get('qrcode/{id}','HomeController@getQrCode');
+
+Route::get('qrlogin',['as' => 'qrlogin','uses'=>'LoginController@getLoginQR']);
+Route::get('qrcodelogin','LoginController@postLoginQR');
+
+
 Route::get('forgot-password','ForgotPasswordController@forgotPassword');
 
 Route::post('forgot-password',['as' =>'forgot-password','uses'=> 'ForgotPasswordController@postForgotPassword']);
@@ -79,6 +85,10 @@ Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 
 Route::get('abc',function(){
 
+$string = str_random(40);
+// $string = str_random(40);
+
+echo $string;
 
 // $data  = DB::table('users')->select('users.*','company.name as name_company')
 //         ->join('company', function ($join) {
@@ -121,9 +131,13 @@ Route::get('abc',function(){
 });
 
 
-Route::get('test',['as'=>'test','uses'=>'SearchController@TestController']);
 
-Route::get('button',['as'=>'button','uses'=>'SearchController@ButtonController']);
+Route::get('test',function(){
+	return view('test');
+});
+Route::get('test2',function(){
+	return view('qrcode');
+});
 
 
 

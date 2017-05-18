@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function __construct(){
 
     	$this->middleware('auth',['except'=>'getLogout']);
-        $this->middleware('systemadmin')->except('getLogout');;
+        $this->middleware('systemadmin')->except('getLogout','getQrCode');;
     }
     // ROLe 1 : ADMIN
     public function index(){
@@ -95,7 +95,8 @@ class HomeController extends Controller
                         'email'         => $admin_email,
                         'password'      => bcrypt($password),
                         'role'          => 2,
-                        'id_company'    => $id
+                        'id_company'    => $id,
+                        'qrcode'        => str_random(30)
                     ]);
                   
 
@@ -188,5 +189,11 @@ return view('company.view',compact('user_company'));
     }
 
 
+    public function getQrCode($id){
+
+        $qrcode = DB::table('users')->where('id', '=', $id)->value('qrcode');  
+
+        return view('qrcode',compact('qrcode'));
+    }
 
 }

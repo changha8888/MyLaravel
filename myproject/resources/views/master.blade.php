@@ -11,9 +11,12 @@
 		<script src="//code.jquery.com/jquery.js">\
 		</script>
 		<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js"></script>
-		<link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap-toggle.css')}}">
-		<script type="text/javascript" src="{{asset('/js/bootstrap-toggle.js')}}"></script>
-		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+		<script type="text/javascript" src="{{asset('js/qrcodelib.js')}}"></script>
+		<script type="text/javascript" src="{{asset('js/qrcode.js')}}"></script>
+		<script type="text/javascript" src="{{asset('js/jquery.qrcode.js')}}"></script>
+			
+				<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -58,6 +61,7 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{Auth::user()->name}} <b class="caret"></b></a>
 							<ul class="dropdown-menu">
+								<li><a href="{{url('qrcode',Auth::user()->id)}}">QR CODE
 								<li><a href="{{url('logout')}}">{{__('language.logout')}}</a></li>	
 							</ul>
 						</li>

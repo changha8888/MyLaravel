@@ -9,6 +9,11 @@
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 			<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+		
+			<script type="text/javascript" src="{{asset('js/qrcode.js')}}"></script>
+			<script type="text/javascript" src="{{asset('js/jquery.qrcode.js')}}"></script>
+			
+
 
 <script src="js/demo.js" type="text/javascript"></script>
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -57,6 +62,20 @@
 
 
 
+<input type="hidden" id="qrcode" value="linhdaca">
+<p>Render in table</p>
+<div id="qrcodeTable"></div>
+
+<script>
+	//jQuery('#qrcode').qrcode("this plugin is great");
+
+	var abc = 'fasdfsfd';
+	jQuery('#qrcodeTable').qrcode({
+		render	: "table",
+		text	: abc
+	});	
+	
+</script>
 
 
 

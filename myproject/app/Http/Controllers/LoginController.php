@@ -98,6 +98,24 @@ class LoginController extends Controller
     }
 
 
+    public function getLoginQR(){
+        return view('test');
+    }
+
+    public function postLoginQR(Request $request){
+
+        $code = $request->code;
+    
+
+       $user =  Users::where('qrcode',$code)->first();
+
+        if($user){
+          return redirect()->route('home');
+        }else{
+            
+        }
+    }
+
 
     // public function postRegister(Request $request){
 

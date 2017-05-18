@@ -9,88 +9,114 @@
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
+		<script src="//code.jquery.com/jquery.js"></script>
 
-		<style type="text/css">
-			.test{
-				background: red;
-			}
+		
+		<!-- <script src="{{asset('js/WebCodeCam.js')}}"></script> -->
+		<script src="{{asset('js/qrcodelib.js')}}"></script>
+		<!-- <script src="{{asset('js/DecoderWorker.js')}}"></script> -->
+		<!-- <script src="{{asset('js/WebCodeCam.js')}}"></script> -->
 
 
-		</style>
+
+
 	</head>
 	<body>
-		
-		<!-- <form action="" method="POST" role="form">
-			<legend>Form title</legend>
-		
-			<div class="container-fluid">
+	
+<form role="form">
+	<legend>Form title</legend>
 
-				<div class="row">
-					<div class="col-md-6 col-md-offset-3">
-						<input type="text" name="" id="input" class="form-control" value="" required="required" pattern="" title="">
-					</div>
-				</div>
-				<p></p>
-		
-			</div>
-		
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form> -->
+<input type="text" id="send" name="code">
 
+	{{ csrf_field() }}
 
+	<button type="submit" class="btn btn-primary">Submit</button>
+</form>
 
-		
-		<!-- <div class="try"> TEST </div> -->
-			
+		<canvas id="canvas"></canvas>
+<input type="file" id="file-input">
 
+<!-- <button type="button" class="btn btn-default">button</button> -->
+
+<script>
+$(function() {
+    $('#file-input').change(function(e) {
+        var file = e.target.files[0],
+            imageType = /image.*/;
+
+        if (!file.type.match(imageType))
+            return;
+
+        var reader = new FileReader();
+        reader.onload = fileOnload;
+        reader.readAsDataURL(file);
+    });
+
+    function fileOnload(e) {
+        var $img = $('<img>', { src: e.target.result });
+        $img.load(function() {
+            var canvas = $('#canvas')[0];
+            var context = canvas.getContext('2d');
+
+            canvas.width = this.naturalWidth;
+            canvas.height = this.naturalHeight;
+            context.drawImage(this, 0, 0);
+        });
+    }
 
     
 
-    <div class="container">
+});
 
-   		 <input type="text" name="country" id="country" class="form-control">
-   		 <div id="countryList"></div>
-   		 <p></p>
+    $('.btn').click(function(){
 
-
-    </div>
-		
+        var canvas = document.getElementById('canvas');
+        var dataURL = canvas.toDataURL();
 
 
-		<a href="{{route('')}}"></a>
+          function decodeImageFromBase64(data, callback){
+                        // set callback
+                        qrcode.callback = callback;
+                        // Start decoding
+                        qrcode.decode(data)
+                    }
 
-		<script type="text/javascript" src="{{asset('/js/jquery-3.2.1.min.js')}}"></script>
+             decodeImageFromBase64(dataURL,function(decodedInformation){
+                // alert(decodedInformation);
+                // $('#send').val(decodedInformation);
 
-		<script type="text/javascript">
+             function test(){
+
+                var value = decodedInformation;
+                $.ajax({
+                    url: 'qrcodelogin',
+                    type : 'get',
+                    data :{code: value},
+
+                    success:function(data){
+                        console.log(data);
+                        $('.abc').html(data);
+                    }
+
+                });
+
+    }
+
+    test();
+
+
+             });
+    });
 
 
 
+</script>
 
 
-		// $('.try').addClass('test');
-		// var abc = 'test';
-
-		// 	// $("input").keyup(function() {
-		// 	// 	var value = $(this).val();
-		// 	// 	$("p").text(value);
-		// 	// })
-		// 	// .keyup();
-
-			
-		// 	alert(abc);
-
-
-		</script>
 
 
 		<!-- jQuery -->
-		<script src="//code.jquery.com/jquery.js"></script>
+		
 		<!-- Bootstrap JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
