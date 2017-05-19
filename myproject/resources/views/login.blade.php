@@ -43,27 +43,29 @@
 
 							<label><input type="checkbox" value="remember">{{ __('language.remember_me') }}</label>
 
+							<a class="btn btn-link" href="{{ url('/forgot-password') }}">
+                            {{ __('language.forgot_password') }}
+                        </a>
+
 						</div>
 
 
 						<button type="submit" class="btn btn-primary">{{ __('language.login') }}</button>
 
-						<a class="btn btn-link" href="{{ url('/forgot-password') }}">
-                            {{ __('language.forgot_password') }}
+						
+                        <a class="btn btn-info" href="{{ url('qrlogin') }}">
+                          Login Qr-Code
                         </a>
 						@if($errors->has('errorlogin'))
-
-						<div class="alert alert-danger">
+							
+							<div class="alert alert-danger">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 							{{$errors->first('errorlogin')}}
 						</div>
 						@endif
 					</form>
 
-
-					<a class="btn btn-link" href="{{ url('qrlogin') }}">
-                          LOGIN BY QRCODE
-                        </a>
+					
 				</div>
 			</div>
 		</div>

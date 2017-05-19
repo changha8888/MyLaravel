@@ -64,6 +64,7 @@ class CompanyController extends Controller
             $email              = $request->input('email');
             $password           = $request->input('password');
 
+
             $user = Users::where('email', '=', $email)->first();
             
             if($user == null){ 
@@ -74,7 +75,8 @@ class CompanyController extends Controller
                         'email'         => $email,
                         'password'      => bcrypt($password),
                         'role'          => 4,
-                        'id_company'    => $id_company
+                        'id_company'    => $id_company,
+                        'qrcode'        => str_random(30)
                     ]);
 
                return redirect()->route('admin_company', ['id_company' =>  $id_company ])->with('message','Register Success !!!');
@@ -86,7 +88,6 @@ class CompanyController extends Controller
         }    
 
     }
-
 
     public function editUserCompany(Request $request){
       
@@ -205,6 +206,7 @@ class CompanyController extends Controller
                     'email'     => $value->email,
                     'password'  => bcrypt($value->password),
                     'role'      => 4,
+                    'qrcode'    => str_random(30),
                     
                     'id_company'=> $request->input('id') ]);
            }else{

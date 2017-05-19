@@ -77,19 +77,14 @@ class LoginController extends Controller
                 if($role == 1){
 
                     return redirect()->route('home');
-
                 }
                 if($role == 2){
                     return redirect()->route('admin_company',['id_company'=>$id_company]);
-                   
                 }
 
                 if($role == 4){
                     return redirect()->route('normaluser',['id'=>$id_user]);
-                   
-                }
-
-            
+                }            
     		}else{
     			$errors = new MessageBag(['errorlogin'=>'wrong email or password']);
     			return redirect()->back()->withInput()->withErrors($errors);
@@ -99,77 +94,33 @@ class LoginController extends Controller
 
 
     public function getLoginQR(){
-        return view('test');
+        return view('qr-login');
     }
 
     public function postLoginQR(Request $request){
 
-        $code = $request->code;
-    
-
-       $user =  Users::where('qrcode',$code)->first();
+        $code       = $request->code;
+        $user       = Users::where('qrcode',$code)->first();     
+        $role       = Users::where('qrcode',$code)->value('role');
+        $id_user    = Users::where('qrcode',$code)->value('id');
+        $id_company = Users::where('qrcode',$code)->value('id_company');
 
         if($user){
-          return redirect()->route('home');
-        }else{
             
-        }
+            Auth::login($user);
+
+            if($role == 1){
+                return redirect()->route('home');
+            }
+            if($role == 2){   
+                return redirect()->route('admin_company',['id_company'=>$id_company]);  
+            }
+            if($role == 4){      
+                return redirect()->route('normaluser',['id'=>$id_user]);     
+            }
+        } else{
+            return redirect()->back()->with('message','Qr Code Login Fail !!!');
+           
+        }         
     }
-
-
-    // public function postRegister(Request $request){
-
-    //  	$rules = [
-    //  		'name'                => 'required',
-    // 		'email'               => 'required|email',
-    // 		'password'            => 'required|min:6',
-    //         'password_confirm'    => 'required|same:password'
-
-    // 	];
-    	
-    // 	$validator = Validator::make($request->all(),$rules);
-
-    //     if($validator->fails()){
-
-    //         return redirect()->back()->withErrors($validator);
-    //     }    
-
-    // 	else{
-
-    // 		// $users = new Users;
-
-    // 		// $users->name      = $request->name;
-    // 		// $users->email     = $request->email;
-    // 		// $users->password  = bcrypt($request->password);
-    // 		// $users->save();
-    //         $user = Users::where('email', '=', $request->email)->first();
-    //         if ($user === null) {
-    //             $id = DB::table('users')->insertGetId( 
-    //                 array(
-    //                     'name' => $request->name,
-    //                     'email' => $request->email,
-    //                     'password'=> bcrypt($request->password),
-    //                     )
-    //             );
-
-    //             DB::table('roles')->insert(['id' => $id, 'permission' => 4]);
-
-    //             return redirect('login')->with('message','Register Success !!!');
-
-    //         } else {
-
-    //             return redirect()->back()->with('message_fail', 'exist');
-    //         }    
-
-    // 	}
-	
-    // }
-
-
-    // public function getLogout(){
-    //     Auth::logout();
-    //     return redirect('login');
-    // }
-
-
 }

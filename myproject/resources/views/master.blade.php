@@ -15,6 +15,8 @@
 		<script type="text/javascript" src="{{asset('js/qrcodelib.js')}}"></script>
 		<script type="text/javascript" src="{{asset('js/qrcode.js')}}"></script>
 		<script type="text/javascript" src="{{asset('js/jquery.qrcode.js')}}"></script>
+		<script type="text/javascript" src="{{asset('js/custom-qrcode.js')}}"></script>
+
 			
 				<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,10 +39,8 @@
 				<a class="navbar-brand" href="#">Laravel</a>
 			</div>
 
-
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav navbar-right">
-
 
 				<li style="margin-top: 7px;">
 					<form method="get" id='setlang' action="{{route('setlang')}}">
@@ -52,16 +52,12 @@
 					</form>
 				</li>
 
-
-
-
-
 					@if(Auth::check())
 					
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{Auth::user()->name}} <b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="{{url('qrcode',Auth::user()->id)}}">QR CODE
+								<li><a href="{{url('qrcode',Auth::user()->id)}}">Qr-Code
 								<li><a href="{{url('logout')}}">{{__('language.logout')}}</a></li>	
 							</ul>
 						</li>
@@ -69,13 +65,11 @@
 				 	@else
 
 				 	<li><a href="{{ url('login') }}">{{ __('language.login') }}</a></li>
-					<!-- <li><a href="{{ url('register') }}">{{ __('language.register') }}</a></li> -->
 
 					@endif
 				</ul>
 	
 			</div><!-- /.navbar-collapse -->
-
 
 		</div>
 	</nav>

@@ -28,7 +28,7 @@ Route::get('logout','HomeController@getLogout');
 Route::get('qrcode/{id}','HomeController@getQrCode');
 
 Route::get('qrlogin',['as' => 'qrlogin','uses'=>'LoginController@getLoginQR']);
-Route::get('qrcodelogin','LoginController@postLoginQR');
+Route::post('qrcodelogin','LoginController@postLoginQR');
 
 
 Route::get('forgot-password','ForgotPasswordController@forgotPassword');
@@ -85,16 +85,12 @@ Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 
 Route::get('abc',function(){
 
-$string = str_random(40);
-// $string = str_random(40);
-
-echo $string;
 
 // $data  = DB::table('users')->select('users.*','company.name as name_company')
 //         ->join('company', function ($join) {
 //             $join->on('users.id_company', '=', 'company.id_company')
 //                  ->where('users.role', '=', 2);
-                 
+
 //         })
 //         ->get();
 
@@ -125,7 +121,7 @@ echo $string;
 //             ->join('usercompany', 'usercompany.id_company', '=', 'company.id_company')
 //             ->join('users', 'users.id', '=', 'usercompany.id_user')
 //             ->select('users.email','company.*' )
-//             ->get(); 
+//             ->get();
 
 
 });
@@ -147,4 +143,3 @@ Route::get('test2',function(){
 // Route::get()
 
 // select a.name, a.email, b.permission, b.count_login from users a INNER JOIN roles b ON a.id = b.id INNER JOIN (select permission, MAX(count_login)as max from roles group by permission) c ON b.permission = c.permission AND b.count_login = c.max ;
-
