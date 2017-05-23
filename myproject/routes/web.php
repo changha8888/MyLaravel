@@ -86,6 +86,7 @@ Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 Route::get('abc',function(){
 
 
+
 // $data  = DB::table('users')->select('users.*','company.name as name_company')
 //         ->join('company', function ($join) {
 //             $join->on('users.id_company', '=', 'company.id_company')

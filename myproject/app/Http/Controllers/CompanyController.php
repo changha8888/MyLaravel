@@ -10,6 +10,7 @@ use Roles;
 use App\Users;
 use Illuminate\Support\Facades\Input;
 use Excel;
+use File;
 
 
 class CompanyController extends Controller
@@ -169,6 +170,8 @@ class CompanyController extends Controller
         $file = Input::file('file');
 
         $file_name = $file->getClientOriginalName();
+
+        File::makeDirectory('files', 0775, true, true);
 
         $file->move('files',$file_name);
 
