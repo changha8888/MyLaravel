@@ -32,7 +32,7 @@ class CompanyController extends Controller
 
       return view('admincompany.home',compact('company','users_company'));
 
-    }   
+    }
 
     public function RegisterUserCompany($id_company){
 
@@ -49,14 +49,14 @@ class CompanyController extends Controller
             'password_confirm'    => 'required|same:password'
 
         ];
-        
+
         $validator = Validator::make($request->all(),$rules);
 
         if($validator->fails()){
 
             return redirect()->back()->withErrors($validator);
 
-        }else{    
+        }else{
 
 
             $id_company         = $request->input('id_company');
@@ -66,12 +66,12 @@ class CompanyController extends Controller
 
 
             $user = Users::where('email', '=', $email)->first();
-            
-            if($user == null){ 
+
+            if($user == null){
 
                 DB::table('users')->insert([
 
-                        'name'          => $name, 
+                        'name'          => $name,
                         'email'         => $email,
                         'password'      => bcrypt($password),
                         'role'          => 4,
@@ -83,14 +83,14 @@ class CompanyController extends Controller
             }else{
 
                 return redirect()->back()->with('message_fail', 'exist');
-            }  
-            
-        }    
+            }
+
+        }
 
     }
 
     public function editUserCompany(Request $request){
-      
+
         $id_user    = $request->input('id_user');
         $id_company = $request->input('id_company');
 
@@ -103,7 +103,7 @@ class CompanyController extends Controller
 
     public function updateUserCompany(Request $request){
 
-     
+
         $rules = [
             'name'                => 'required',
             'email'               => 'required|email',
@@ -111,7 +111,7 @@ class CompanyController extends Controller
             'password_confirm'    => 'required|same:password'
 
         ];
-        
+
         $validator = Validator::make($request->all(),$rules);
 
         if($validator->fails()){
@@ -132,8 +132,8 @@ class CompanyController extends Controller
             ->update(['name' => $name , 'email' => $email ,'password' =>bcrypt($password)]);
 
             return redirect()->route('admin_company', ['id_company' =>  $id_company ])->with('message','Update User Success !!!');
-        }   
-       
+        }
+
     }
 
     public function deleteUserCompany(Request $request){
@@ -196,18 +196,18 @@ class CompanyController extends Controller
                 'password'    =>'required|min:6',
 
             ];
-            
+
             $validator = Validator::make($arr_user,$rules);
-            
+
            if(!$email && !$validator->fails()){
 
                 DB::table('users')->insert(
-                    ['name'     => $value->name, 
+                    ['name'     => $value->name,
                     'email'     => $value->email,
                     'password'  => bcrypt($value->password),
                     'role'      => 4,
                     'qrcode'    => str_random(30),
-                    
+
                     'id_company'=> $request->input('id') ]);
            }else{
 
@@ -221,17 +221,23 @@ class CompanyController extends Controller
                     ];
 
                 }else{
-                    
+
                     $record_err[$k] = [
                         'name'      => $value->name,
                         'email'     => $value->email,
                         'password'  => $value->password,
                         'status'    => 'Record error some information'
                     ];
-                }       
-            }           
+                }
+            }
         }
 
-        return view('admincompany.error',compact('record_err','id'));    
+        if(isset($record_err)){
+
+            return view('admincompany.error',compact('record_err','id'));
+        }else{
+
+            return redirect()->route('admin_company', ['id_company' =>  $id_company ]);
+        }   
     }
 }
