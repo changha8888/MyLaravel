@@ -24,6 +24,7 @@ $(function() {
         setTimeout(function() {
       
             var canvas = $('#canvas')[0];
+
             var dataURL = canvas.toDataURL();
 
             function decodeImageFromBase64(data, callback){
