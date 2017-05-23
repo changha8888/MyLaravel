@@ -41,6 +41,6 @@
     <script type="text/javascript" src="{{asset('js/cam/qrcodelib.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/cam/WebCodeCam.js')}}"></script>
 
-    <!-- <script type="text/javascript" src="{{asset('js/camera-qrcode.js')}}"></script> -->
+    <script type="text/javascript" src="{{asset('js/camera-qrcode.js')}}"></script>
 
 @endsection
