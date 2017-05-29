@@ -20,6 +20,8 @@ use Illuminate\Http\Request;
 
 Route::post('login', 'LoginController@apiLogin');
 
+Route::get('data/{id}', 'LoginController@dataapi');
+
 Route::get('testAuth3', function () {
 		dd('ko auth van vao dc');
 });

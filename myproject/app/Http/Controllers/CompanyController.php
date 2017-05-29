@@ -11,7 +11,8 @@ use App\Users;
 use Illuminate\Support\Facades\Input;
 use Excel;
 use File;
-
+use Auth;
+use App\Jobs\UploadFileExcel;
 
 class CompanyController extends Controller
 {
@@ -171,76 +172,92 @@ class CompanyController extends Controller
 
         $file_name = $file->getClientOriginalName();
 
-        File::makeDirectory('files', 0775, true, true);
+        $dir_path = storage_path('user_data'.'/'.Auth::id());
 
-        $file->move('files',$file_name);
+        if(is_dir($dir_path)==false){
 
-        $results = Excel::load('files/'.$file_name,function($reader){
-
-            $reader->all();
-
-        })->get();
-
-       $k = 0;
-        foreach ($results as $value ) {
-
-            $k++;
-
-            $email = Users::where('email', '=', $value->email)->value('email');
-            $arr_user = [
-                'name'      => $value->name,
-                'email'     => $value->email,
-                'password'  => $value->password,
-             ];
-
-             $rules = [
-                'name'        => 'required',
-                'email'       => 'required|email',
-                'password'    =>'required|min:6',
-
-            ];
-
-            $validator = Validator::make($arr_user,$rules);
-
-           if(!$email && !$validator->fails()){
-
-                DB::table('users')->insert(
-                    ['name'     => $value->name,
-                    'email'     => $value->email,
-                    'password'  => bcrypt($value->password),
-                    'role'      => 4,
-                    'qrcode'    => str_random(30),
-
-                    'id_company'=> $request->input('id') ]);
-           }else{
-
-                if($email == $value->email && $email != null){
-
-                    $record_err[$k] = [
-                        'name'      => $value->name,
-                        'email'     => $value->email,
-                        'password'  => $value->password,
-                        'status'    => 'User was used'
-                    ];
-
-                }else{
-
-                    $record_err[$k] = [
-                        'name'      => $value->name,
-                        'email'     => $value->email,
-                        'password'  => $value->password,
-                        'status'    => 'Record error some information'
-                    ];
-                }
-            }
+            mkdir($dir_path,0755,true);
         }
 
-        if(isset($record_err)){
+        $file->move($dir_path,$file_name);
 
-            return view('admincompany.error',compact('record_err','id'));
-        }else{
+        $dir_path_file = $dir_path.'/'.$file_name;
 
-            return redirect()->route('admin_company', ['id_company' =>  $id_company ]);
-        }   
+        $job = new UploadFileExcel($id,$dir_path_file);
+        
+        dispatch(($job)->onQueue('processing'));
+
+        return redirect()->route('admin_company', ['id_company' =>  $id ]);
+
+
+
+        // $results = Excel::load($dir_path_file,function($reader){
+
+        //     $reader->all();
+
+        // })->get();
+
+
+       // $k = 0;
+       //  foreach ($results as $value ) {
+
+       //      $k++;
+
+       //      $email = Users::where('email', '=', $value->email)->value('email');
+       //      $arr_user = [
+       //          'name'      => $value->name,
+       //          'email'     => $value->email,
+       //          'password'  => $value->password,
+       //       ];
+
+       //       $rules = [
+       //          'name'        => 'required',
+       //          'email'       => 'required|email',
+       //          'password'    =>'required|min:6',
+
+       //      ];
+
+       //      $validator = Validator::make($arr_user,$rules);
+
+       //     if(!$email && !$validator->fails()){
+
+       //          DB::table('users')->insert(
+       //              ['name'     => $value->name,
+       //              'email'     => $value->email,
+       //              'password'  => bcrypt($value->password),
+       //              'role'      => 4,
+       //              'qrcode'    => str_random(30),
+
+       //              'id_company'=> $request->input('id') ]);
+       //     }else{
+
+       //          if($email == $value->email && $email != null){
+
+       //              $record_err[$k] = [
+       //                  'name'      => $value->name,
+       //                  'email'     => $value->email,
+       //                  'password'  => $value->password,
+       //                  'status'    => 'User was used'
+       //              ];
+
+       //          }else{
+
+       //              $record_err[$k] = [
+       //                  'name'      => $value->name,
+       //                  'email'     => $value->email,
+       //                  'password'  => $value->password,
+       //                  'status'    => 'Record error some information'
+       //              ];
+       //          }
+       //      }
+       //  }
+
+       //  if(isset($record_err)){
+
+       //      return view('admincompany.error',compact('record_err','id'));
+       //  }else{
+
+       //      return redirect()->route('admin_company', ['id_company' =>  $id_company ]);
+       //  }   
     }
 }

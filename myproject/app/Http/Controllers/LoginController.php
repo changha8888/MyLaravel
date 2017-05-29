@@ -123,4 +123,15 @@ class LoginController extends Controller
            
         }         
     }
+
+
+    public function dataapi($id){
+
+        // $id = $request->input('id');
+        
+
+        $user = DB::table('users')->where('id', $id)->first();
+
+        return response()->json($user);
+    }
 }

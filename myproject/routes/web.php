@@ -85,6 +85,11 @@ Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 
 Route::get('abc',function(){
 
+$a = 120;
+$b = 170;
+	 $job = new \App\Jobs\TestQueue($a,$b);
+          dispatch($job);
+
 
 
 // $data  = DB::table('users')->select('users.*','company.name as name_company')
@@ -98,12 +103,7 @@ Route::get('abc',function(){
 
 	  // $data = DB::table('users')->where('id_company', 2)->get();
 
-	$data = DB::table('users')
-            ->join('company', 'users.id_company', '=', 'company.id_company')
-           	->where('users.id_company', '=', 2)
-           	->where('users.role', '=', 2)
-            ->select('*')
-            ->get();
+
 
 // dd($data);
 // $subQuery = DB::table('roles')->select(['permission', DB::raw('max(count_login) as max')])->groupBy('permission');
