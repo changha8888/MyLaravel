@@ -183,9 +183,48 @@ class CompanyController extends Controller
 
         $dir_path_file = $dir_path.'/'.$file_name;
 
-        $job = new UploadFileExcel($id,$dir_path_file);
+        // $job = new UploadFileExcel($id,$dir_path_file);
         
-        dispatch(($job)->onQueue('processing'));
+        // dispatch(($job)->onQueue('uploadfile'));
+
+        Excel::filter('chunk')->load($dir_path_file)->chunk(100, function($results) use($id)
+        { 
+              $k = 0;
+            foreach($results as $row)
+            {
+
+              $k++;
+
+                $email = Users::where('email', '=', $row->email)->value('email');
+                $arr_user = [
+                    'name'      => $row->name,
+                    'email'     => $row->email,
+                    'password'  => $row->password,
+                 ];
+
+                 $rules = [
+                    'name'        => 'required',
+                    'email'       => 'required|email',
+                    'password'    =>'required|min:6',
+
+                ];
+
+                $validator = Validator::make($arr_user,$rules);
+
+               if(!$email && !$validator->fails()){
+
+                    DB::table('users')->insert(
+                        ['name'     => $row->name,
+                        'email'     => $row->email,
+                        'password'  => bcrypt($row->password),
+                        'role'      => 4,
+                        'qrcode'    => str_random(30),
+
+                        'id_company'=> $id ]);
+                }
+            }
+      });
+
 
         return redirect()->route('admin_company', ['id_company' =>  $id ]);
 

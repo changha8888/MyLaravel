@@ -48,7 +48,6 @@ class UploadFileExcel implements ShouldQueue
 
         Log::info('HANDLE -- PATH'.$path);
 
-        // Log::info('sum'.$a+100);
 
         $results = Excel::load($path,function($reader){
 
@@ -56,7 +55,7 @@ class UploadFileExcel implements ShouldQueue
 
         })->get();
 
-        Log::info('HANDLE -- RESULTS'.$results);
+        Log::info('LOADED');
        $k = 0;
         foreach ($results as $value ) {
 

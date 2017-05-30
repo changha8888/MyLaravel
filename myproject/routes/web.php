@@ -85,10 +85,23 @@ Route::get('result',['as'=>'result','uses'=>'SearchController@search']);
 
 Route::get('abc',function(){
 
-$a = 120;
-$b = 170;
-	 $job = new \App\Jobs\TestQueue($a,$b);
-          dispatch($job);
+
+DB::table('users')->where('role', '=', 4)->delete();
+DB::table('jobs')->delete();
+echo 'DONE';
+
+
+	// $job = new \App\Jobs\TestJobs();
+	// dispatch($job);
+
+
+
+// $a = 120;
+// $b = 170;
+// 	 $job = new \App\Jobs\TestQueue($a,$b);
+//           dispatch($job);
+
+
 
 
 
