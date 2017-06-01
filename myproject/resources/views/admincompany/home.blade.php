@@ -24,6 +24,8 @@
 
 				<a href="{{url('upload',$company->id_company)}}" class="btn btn-info">Upload File</a>
 
+				<a href="{{url('error-file',$company->id_company)}}" class="btn btn-danger">File Error</a>
+
 			</form>
 		</div>
 	</div>

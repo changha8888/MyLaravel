@@ -13,6 +13,7 @@ use Excel;
 use File;
 use Auth;
 use App\Jobs\UploadFileExcel;
+use Log;
 
 class CompanyController extends Controller
 {
@@ -172,7 +173,7 @@ class CompanyController extends Controller
 
         $file_name = $file->getClientOriginalName();
 
-        $dir_path = storage_path('user_data'.'/'.Auth::id());
+        $dir_path = storage_path('user_data'.'/'.$id);
 
         if(is_dir($dir_path)==false){
 
@@ -186,16 +187,17 @@ class CompanyController extends Controller
         // $job = new UploadFileExcel($id,$dir_path_file);
         
         // dispatch(($job)->onQueue('uploadfile'));
+        
 
-        Excel::filter('chunk')->load($dir_path_file)->chunk(100, function($results) use($id)
+        Excel::filter('chunk')->load($dir_path_file)->chunk(200, function($results) use($id,$file_name,$dir_path)
         { 
-              $k = 0;
+            
             foreach($results as $row)
             {
 
-              $k++;
-
-                $email = Users::where('email', '=', $row->email)->value('email');
+             
+                // $email = Users::where('email', '=', $row->email)->value('email');
+                $user = Users::where('email', '=', $row->email)->first();
                 $arr_user = [
                     'name'      => $row->name,
                     'email'     => $row->email,
@@ -211,7 +213,7 @@ class CompanyController extends Controller
 
                 $validator = Validator::make($arr_user,$rules);
 
-               if(!$email && !$validator->fails()){
+               if($user == null && !$validator->fails()){
 
                     DB::table('users')->insert(
                         ['name'     => $row->name,
@@ -221,82 +223,111 @@ class CompanyController extends Controller
                         'qrcode'    => str_random(30),
 
                         'id_company'=> $id ]);
+
+
+
+                }
+                if($user != null || $validator->fails()) {
+
+                   $err_user = [
+                      $row->name,
+                      $row->email,
+                      $row->password,
+                   ];
+
+            
+                   $without_extension = substr($file_name, 0, strrpos($file_name, "."));
+                   $check = $dir_path."/Error_".$without_extension.".xlsx";
+
+
+                  if(File::exists($check) == false){
+
+                     Excel::create('Error_'.$without_extension, function($excel)use($id,$err_user) {
+
+                      $excel->sheet('Error', function($sheet)use($id,$err_user) {
+
+                          $sheet->fromArray($err_user);
+
+                      });
+
+                    })->store('xlsx', storage_path('user_data/'.$id));
+
+                   } 
+                   else{
+
+
+                    Excel::load($check, function($reader)use($id,$err_user)
+                    {
+
+                      $reader->sheet('Error',function($sheet)use($id,$err_user)  {
+
+                          $sheet->prependRow($err_user);
+                      });
+
+                    })->store('xlsx', storage_path('user_data/'.$id), false);
+
+                   }
+
                 }
             }
+            $without_extension = substr($file_name, 0, strrpos($file_name, "."));
+                $check = $dir_path."/Error_".$without_extension.".xlsx";
+        
+                    Excel::load($check, function($reader)use($id)
+                    {
+
+                      $reader->sheet('Error',function($sheet)use($id)  {
+
+                          $sheet->prependRow(['name','email','password']);
+                      });
+
+                    })->store('xlsx', storage_path('user_data/'.$id), false);
+            
       });
 
+
+        
 
         return redirect()->route('admin_company', ['id_company' =>  $id ]);
 
 
-
-        // $results = Excel::load($dir_path_file,function($reader){
-
-        //     $reader->all();
-
-        // })->get();
-
-
-       // $k = 0;
-       //  foreach ($results as $value ) {
-
-       //      $k++;
-
-       //      $email = Users::where('email', '=', $value->email)->value('email');
-       //      $arr_user = [
-       //          'name'      => $value->name,
-       //          'email'     => $value->email,
-       //          'password'  => $value->password,
-       //       ];
-
-       //       $rules = [
-       //          'name'        => 'required',
-       //          'email'       => 'required|email',
-       //          'password'    =>'required|min:6',
-
-       //      ];
-
-       //      $validator = Validator::make($arr_user,$rules);
-
-       //     if(!$email && !$validator->fails()){
-
-       //          DB::table('users')->insert(
-       //              ['name'     => $value->name,
-       //              'email'     => $value->email,
-       //              'password'  => bcrypt($value->password),
-       //              'role'      => 4,
-       //              'qrcode'    => str_random(30),
-
-       //              'id_company'=> $request->input('id') ]);
-       //     }else{
-
-       //          if($email == $value->email && $email != null){
-
-       //              $record_err[$k] = [
-       //                  'name'      => $value->name,
-       //                  'email'     => $value->email,
-       //                  'password'  => $value->password,
-       //                  'status'    => 'User was used'
-       //              ];
-
-       //          }else{
-
-       //              $record_err[$k] = [
-       //                  'name'      => $value->name,
-       //                  'email'     => $value->email,
-       //                  'password'  => $value->password,
-       //                  'status'    => 'Record error some information'
-       //              ];
-       //          }
-       //      }
-       //  }
-
-       //  if(isset($record_err)){
-
-       //      return view('admincompany.error',compact('record_err','id'));
-       //  }else{
-
-       //      return redirect()->route('admin_company', ['id_company' =>  $id_company ]);
-       //  }   
     }
+
+    public function ErrorFile($id_company){
+
+    $dir_path = storage_path('user_data'.'/'.$id_company);    
+
+    $file = scandir($dir_path);
+    $k = 0;
+    foreach ($file as $value) {
+      $k++;
+
+      if(substr($value, 0, 5) == "Error"){
+       
+        $filename[$k] = $value;
+      }
+      
+    } 
+    if(!isset($filename) ){
+
+      return redirect()->back();
+    }
+
+     return view('admincompany.error-file',compact('filename','id_company'));
+   
+    }
+
+    public function FileDetail($id_company,$filename){
+
+      $dir_path_file = storage_path('user_data/'.$id_company.'/'.$filename);  
+
+      $result = Excel::load($dir_path_file, function($reader)
+        {
+          $reader->all();
+
+        })->get();
+
+      return view('admincompany.detail-file',compact('result','id_company'));
+    }
+
 }

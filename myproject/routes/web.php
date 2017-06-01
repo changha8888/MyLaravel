@@ -74,6 +74,10 @@ Route::get('upload/{id}',['as'=>'upload','uses'=>'CompanyController@upload' ]);
 
 Route::post('importUser',['as'=>'importUser','uses'=>'CompanyController@importUser' ]);
 
+Route::get('error-file/{id}',['as'=>'error','uses'=>'CompanyController@ErrorFile' ]);
+
+Route::get('file-detail/{id}/{filename}',['as'=>'detail','uses'=>'CompanyController@FileDetail' ]);
+
 
 });
 
@@ -87,8 +91,12 @@ Route::get('abc',function(){
 
 
 DB::table('users')->where('role', '=', 4)->delete();
+DB::table('users')->where('id_company', '=', 0)->delete();
 DB::table('jobs')->delete();
+
+                 
 echo 'DONE';
+
 
 
 	// $job = new \App\Jobs\TestJobs();
