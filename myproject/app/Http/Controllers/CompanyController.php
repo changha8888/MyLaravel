@@ -28,7 +28,7 @@ class CompanyController extends Controller
         $users_company = DB::table('users')
                 ->where('role', '=', 4)
                 ->where('id_company','=', $id_company)
-                ->get();
+                ->paginate(10);
 
         $company = DB::table('company')->where('id_company', $id_company)->first();
 
@@ -182,115 +182,41 @@ class CompanyController extends Controller
 
         $file->move($dir_path,$file_name);
 
+        // Create file Excel record user error.
+
+        $without_extension = substr($file_name, 0, strrpos($file_name, "."));
+                   
+        // Create file TXT process percent.
+
+        $file_txt_1 = $dir_path.'/Percent_'.$without_extension.'.txt';
+
+        $handle_1 = fopen($file_txt_1, 'w');
+
+        $data_1 = "0";
+
+        fwrite($handle_1, $data_1);
+
+        $file_txt_2 = $dir_path.'/Pace_'.$without_extension.'.txt';
+
+        $handle_2 = fopen($file_txt_2, 'w');
+
+        $data_2 = "0";
+
+        fwrite($handle_2, $data_2);
+
+        
         $dir_path_file = $dir_path.'/'.$file_name;
 
-        // $job = new UploadFileExcel($id,$dir_path_file);
+        $job = new UploadFileExcel($id,$dir_path,$file_name);
         
-        // dispatch(($job)->onQueue('uploadfile'));
-        
-
-        Excel::filter('chunk')->load($dir_path_file)->chunk(200, function($results) use($id,$file_name,$dir_path)
-        { 
-            
-            foreach($results as $row)
-            {
-
-             
-                // $email = Users::where('email', '=', $row->email)->value('email');
-                $user = Users::where('email', '=', $row->email)->first();
-                $arr_user = [
-                    'name'      => $row->name,
-                    'email'     => $row->email,
-                    'password'  => $row->password,
-                 ];
-
-                 $rules = [
-                    'name'        => 'required',
-                    'email'       => 'required|email',
-                    'password'    =>'required|min:6',
-
-                ];
-
-                $validator = Validator::make($arr_user,$rules);
-
-               if($user == null && !$validator->fails()){
-
-                    DB::table('users')->insert(
-                        ['name'     => $row->name,
-                        'email'     => $row->email,
-                        'password'  => bcrypt($row->password),
-                        'role'      => 4,
-                        'qrcode'    => str_random(30),
-
-                        'id_company'=> $id ]);
-
-
-
-                }
-                if($user != null || $validator->fails()) {
-
-                   $err_user = [
-                      $row->name,
-                      $row->email,
-                      $row->password,
-                   ];
-
-            
-                   $without_extension = substr($file_name, 0, strrpos($file_name, "."));
-                   $check = $dir_path."/Error_".$without_extension.".xlsx";
-
-
-                  if(File::exists($check) == false){
-
-                     Excel::create('Error_'.$without_extension, function($excel)use($id,$err_user) {
-
-                      $excel->sheet('Error', function($sheet)use($id,$err_user) {
-
-                          $sheet->fromArray($err_user);
-
-                      });
-
-                    })->store('xlsx', storage_path('user_data/'.$id));
-
-                   } 
-                   else{
-
-
-                    Excel::load($check, function($reader)use($id,$err_user)
-                    {
-
-                      $reader->sheet('Error',function($sheet)use($id,$err_user)  {
-
-                          $sheet->prependRow($err_user);
-                      });
-
-                    })->store('xlsx', storage_path('user_data/'.$id), false);
-
-                   }
-
-                }
-            }
-            $without_extension = substr($file_name, 0, strrpos($file_name, "."));
-                $check = $dir_path."/Error_".$without_extension.".xlsx";
-        
-                    Excel::load($check, function($reader)use($id)
-                    {
-
-                      $reader->sheet('Error',function($sheet)use($id)  {
-
-                          $sheet->prependRow(['name','email','password']);
-                      });
-
-                    })->store('xlsx', storage_path('user_data/'.$id), false);
-            
-      });
-
-
+        dispatch($job);
         
 
-        return redirect()->route('admin_company', ['id_company' =>  $id ]);
+        // return redirect()->route('admin_company', ['id_company' =>  $id ]);
+      
+        // return redirect()->route('status-upload', ['id_company' =>  $id,'filename'=>$file_name]);
 
-
+        return view('admincompany.status-upload',compact('without_extension','id'));
     }
 
     public function ErrorFile($id_company){
@@ -298,36 +224,43 @@ class CompanyController extends Controller
     $dir_path = storage_path('user_data'.'/'.$id_company);    
 
     $file = scandir($dir_path);
+    // dd($file);
     $k = 0;
     foreach ($file as $value) {
-      $k++;
 
-      if(substr($value, 0, 5) == "Error"){
-       
-        $filename[$k] = $value;
+      $file_extension = substr($value, strrpos($value, "."));
+
+      if($file_extension != '.txt'){
+        $k++;
+        $file_name[$k] = $value;
       }
       
     } 
-    if(!isset($filename) ){
 
-      return redirect()->back();
-    }
+    $file_name = array_slice($file_name,2);
 
-     return view('admincompany.error-file',compact('filename','id_company'));
+
+     return view('admincompany.error-file',compact('file_name','id_company'));
    
     }
 
     public function FileDetail($id_company,$filename){
 
-      $dir_path_file = storage_path('user_data/'.$id_company.'/'.$filename);  
+      $error_users = DB::table('error_users')
+                ->where('file', '=', $filename)
+                ->where('id_company','=', $id_company)
+                ->get();
 
-      $result = Excel::load($dir_path_file, function($reader)
-        {
-          $reader->all();
-
-        })->get();
-
-      return view('admincompany.detail-file',compact('result','id_company'));
+      return view('admincompany.detail-file',compact('error_users','id_company'));
     }
 
+   public function GetStatus(Request $request){
+
+    $id =  $request->input('id');
+    $file_name =  $request->input('file_name');
+
+    $file_path = storage_path('user_data'.'/'.$id.'/Percent_'.$file_name.'.txt');
+
+   return file_get_contents($file_path);
+   }
 }

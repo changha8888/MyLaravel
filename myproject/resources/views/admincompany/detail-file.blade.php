@@ -20,11 +20,8 @@
 					</thead>
 					<tbody>
 					<?php $no = 1; ?>
-					@foreach($result as $record)
+					@foreach($error_users as $record)
 
-						@if($record->name !="name" &&
-						$record->email != "email"&&
-						$record->password !="password" )
 						<tr>
 							<td>{{$no++}}</td>
 							<td>{{$record->name}}</td>
@@ -33,7 +30,7 @@
 							
 							
 						</tr>
-						@endif
+
 
 					@endforeach	
 					</tbody>

@@ -39,7 +39,7 @@
 
 				<thead>
 					<tr>
-						<th>No.</th>
+						<!-- <th>No.</th> -->
 						<th>Name</th>
 						<th>Email</th>
 						<th>Action</th>
@@ -50,7 +50,7 @@
 				@foreach($users_company as $user)
 
 					<tr>
-						<td>{{$no++}}</td>
+						<!-- <td>{{$no++}}</td> -->
 						<td>{{$user->name}}</td>
 						<td>{{$user->email}}</td>
 
@@ -66,6 +66,7 @@
 				@endforeach
 				</tbody>
 			</table>
+			{{ $users_company->links() }}
 		</form>
 	</div>
 </div>

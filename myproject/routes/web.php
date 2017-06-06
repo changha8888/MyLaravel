@@ -78,6 +78,11 @@ Route::get('error-file/{id}',['as'=>'error','uses'=>'CompanyController@ErrorFile
 
 Route::get('file-detail/{id}/{filename}',['as'=>'detail','uses'=>'CompanyController@FileDetail' ]);
 
+Route::get('status-process/{id}',['as'=>'status-process','uses'=>'CompanyController@StatusProcess' ]);
+
+Route::get('getstatus','CompanyController@GetStatus');
+
+
 
 });
 
@@ -91,38 +96,14 @@ Route::get('abc',function(){
 
 
 DB::table('users')->where('role', '=', 4)->delete();
-DB::table('users')->where('id_company', '=', 0)->delete();
+
 DB::table('jobs')->delete();
+
+DB::table('error_users')->delete();
 
                  
 echo 'DONE';
 
-
-
-	// $job = new \App\Jobs\TestJobs();
-	// dispatch($job);
-
-
-
-// $a = 120;
-// $b = 170;
-// 	 $job = new \App\Jobs\TestQueue($a,$b);
-//           dispatch($job);
-
-
-
-
-
-// $data  = DB::table('users')->select('users.*','company.name as name_company')
-//         ->join('company', function ($join) {
-//             $join->on('users.id_company', '=', 'company.id_company')
-//                  ->where('users.role', '=', 2);
-
-//         })
-//         ->get();
-
-
-	  // $data = DB::table('users')->where('id_company', 2)->get();
 
 
 
@@ -151,10 +132,24 @@ echo 'DONE';
 
 
 Route::get('test',function(){
-	return view('test');
+	$a =4;
+
+	return view('test',compact('a'));
+
+
+
+});
+
+
+Route::get('ajax',function(){
+
+ return 'fasdfsdf';
+
+
+
 });
 Route::get('test2',function(){
-	return view('qrcode');
+
 });
 
 
