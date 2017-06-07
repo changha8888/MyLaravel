@@ -78,7 +78,7 @@ Route::get('error-file/{id}',['as'=>'error','uses'=>'CompanyController@ErrorFile
 
 Route::get('file-detail/{id}/{filename}',['as'=>'detail','uses'=>'CompanyController@FileDetail' ]);
 
-Route::get('status-process/{id}',['as'=>'status-process','uses'=>'CompanyController@StatusProcess' ]);
+Route::get('status-process/{id_company}/{file_name}',['as'=>'status-process','uses'=>'CompanyController@StatusUpload' ]);
 
 Route::get('getstatus','CompanyController@GetStatus');
 
@@ -143,7 +143,7 @@ Route::get('test',function(){
 
 Route::get('ajax',function(){
 
- return 'fasdfsdf';
+ return '26';
 
 
 

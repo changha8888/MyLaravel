@@ -261,6 +261,7 @@ class CompanyController extends Controller
                 ->where('id_company','=', $id_company)
                 ->get();
 
+
       return view('admincompany.detail-file',compact('error_users','id_company'));
     }
 
