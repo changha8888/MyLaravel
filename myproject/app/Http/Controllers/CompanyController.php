@@ -171,6 +171,11 @@ class CompanyController extends Controller
 
         $file = Input::file('file');
 
+        if(!$file){
+
+          return redirect()->back()->with('message','Select File Excel !!!');
+        }
+
         $file_name = $file->getClientOriginalName();
 
         $dir_path = storage_path('user_data'.'/'.$id);
@@ -223,8 +228,13 @@ class CompanyController extends Controller
 
     $dir_path = storage_path('user_data'.'/'.$id_company);    
 
+    // $file = scandir($dir_path);
+    if(!is_dir($dir_path)){
+
+      return redirect()->back();
+    }
     $file = scandir($dir_path);
-    // dd($file);
+
     $k = 0;
     foreach ($file as $value) {
 

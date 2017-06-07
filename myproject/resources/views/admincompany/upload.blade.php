@@ -5,18 +5,33 @@
 		
 		<div class="row">
 
-		
-		<form action="{{route('importUser')}}" method="POST" enctype="multipart/form-data" role="form">
+			<div class="col-md-6">		
+				<form action="{{route('importUser')}}" method="POST" enctype="multipart/form-data" role="form">
 
-			<label>Upload file</label>
-			<input type="file" name="file" class="file">
-			<input type="hidden" value="{{$id}}" name="id" />
-			<input type="hidden" value="{{ csrf_token() }}" name="_token" /><br>
-			<input type="submit" name="upload" class="upload btn btn-info" value="Import"> 
+					<label>Upload file</label>
+					<input type="file" name="file" class="file">
+					<input type="hidden" value="{{$id}}" name="id" />
+					<input type="hidden" value="{{ csrf_token() }}" name="_token" /><br>
+					<input type="submit" name="upload" class="upload btn btn-info" value="Import"> 
 
-		</form>
+				</form>
+				
+				@if (session('message'))
+
+		            <br>
+		            <div class="alert alert-danger">
+
+		                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		           
+		                {{session('message')}}
+		            </div>
+		          
+		        @endif  
+
+			</div>	
 
 		</div>
+  
 
 	</div>
 
