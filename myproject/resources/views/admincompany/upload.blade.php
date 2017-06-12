@@ -10,7 +10,7 @@
 
 					<label>Upload file</label>
 					<input type="file" name="file" class="file">
-					<input type="hidden" value="{{$id}}" name="id" />
+					<input type="hidden" value="{{$id}}" name="id_company" />
 					<input type="hidden" value="{{ csrf_token() }}" name="_token" /><br>
 					<input type="submit" name="upload" class="upload btn btn-info" value="Import"> 
 

@@ -51,11 +51,6 @@ class UploadFileExcel implements ShouldQueue
 
         $dir_path_file = $dir_path.'/'.$file_name;
 
-        // Log::info('HANDLE -- ID '.$id);
-        // Log::info('HANDLE -- PATH '.$dir_path);
-        // Log::info('HANDLE -- NAME FILE'.$file_name);
-
-
 
            Excel::filter('chunk')->load($dir_path_file)->chunk(200, function($results) use($id,$file_name,$dir_path)
         { 
@@ -63,7 +58,6 @@ class UploadFileExcel implements ShouldQueue
             foreach($results as $row)
             {
           
-                // $email = Users::where('email', '=', $row->email)->value('email');
                 $user = Users::where('email', '=', $row->email)->first();
                 $arr_user = [
                     'name'      => $row->name,
@@ -78,6 +72,10 @@ class UploadFileExcel implements ShouldQueue
 
                 ];
 
+                  $name = ($row->name !=null) ? $row->name : '';
+                  $email = ($row->email !=null) ? $row->email : '';
+                  $password = ($row->password !=null) ? $row->password : '';
+
                 $validator = Validator::make($arr_user,$rules);
 
                if($user == null && !$validator->fails()){
@@ -88,16 +86,26 @@ class UploadFileExcel implements ShouldQueue
                         'password'  => bcrypt($row->password),
                         'role'      => 4,
                         'qrcode'    => str_random(30),
-
+                        'id_excel_file'=> $row->id,
                         'id_company'=> $id ]);
 
                 }
-                if($user != null || $validator->fails()|| $row->email == null ) {
+                if($user != null && !$validator->fails()){
 
+                  DB::table('error_users')->insert(
+                        ['name'     => $name,
+                        'email'     => $email,
+                        'password'  => $password,
+                        'id_company' => $id, 
+                        'file'      => $file_name,
+                        'id_excel_file'=> $row->id,
+                        'status'    => 'User already exist'
+                         ]);
 
-                  $name = ($row->name !=null) ? $row->name : '';
-                  $email = ($row->email !=null) ? $row->email : '';
-                  $password = ($row->password !=null) ? $row->password : '';
+                  Log::info('ID  :'.$row->id.'-- email  :'.$row->email);
+
+                }
+                if($validator->fails()){
 
                    DB::table('error_users')->insert(
                         ['name'     => $name,
@@ -105,27 +113,34 @@ class UploadFileExcel implements ShouldQueue
                         'password'  => $password,
                         'id_company' => $id, 
                         'file'      => $file_name,
+                        'id_excel_file'=> $row->id,
+                        'status'    => 'User not full infomation'
                          ]);
-
                 }
+
+
+                // if($user != null || $validator->fails() || $row->email == null) {
+
+
+                //   $name = ($row->name !=null) ? $row->name : '';
+                //   $email = ($row->email !=null) ? $row->email : '';
+                //   $password = ($row->password !=null) ? $row->password : '';
+
+                //    DB::table('error_users')->insert(
+                //         ['name'     => $name,
+                //         'email'     => $email,
+                //         'password'  => $password,
+                //         'id_company' => $id, 
+                //         'file'      => $file_name,
+                //          ]);
+
+                //    Log::info('id '.$row->id);
+
+                // }
             }
 
-
-
             $without_extension = substr($file_name, 0, strrpos($file_name, "."));
-                // $check = $dir_path."/Error_".$without_extension.".xlsx";
-        
-                //     Excel::load($check, function($reader)use($id)
-                //     {
 
-                //       $reader->sheet('Error',function($sheet)use($id)  {
-
-                //           $sheet->prependRow(['name','email','password']);
-                //       });
-
-                //     })->store('xlsx', storage_path('user_data/'.$id), false);
-
-     
             $count = DB::table('jobs')->count();
 
             $pace = 100/$count;
@@ -150,50 +165,6 @@ class UploadFileExcel implements ShouldQueue
             file_put_contents($percent_file,$percent_value);
 
 
-
-            // $lines = file($file_txt_1);
-
-            // if($lines[1] == 'pace'){
-
-            //     $file_contents = file_get_contents($file_txt);
-            //     $pace_value = str_replace("pace",$pace,$file_contents);
-            //     file_put_contents($file_txt,$pace_value);
-
-            // }
-
-            // // $valueabc = $lines[1] + 1;
-
-            // $new_percent = 'a';
-            // $new_percent .= floatval(substr($lines[0], 1)) + floatval($lines[1]);
-
-            // $old_percent = $lines[0];
-
-            // $file_contents = file_get_contents($file_txt);
-            // $percent_value = str_replace($old_percent,$new_percent,$file_contents);
-            // file_put_contents($file_txt,$percent_value);
-
-
-
-
-
-
-            // Log::info('phan tram '. $lines[1]);
-            // $handle = fopen($file_txt, 'r');                       
-            // $data = fread($handle,filesize($file_txt));
-
-
-
-  // Log::info(' data file '.$data);
-            // $new_percent = $phantram + $data;
-
-            // Write new value
-
-
-            // fwrite($handle, $new_percent);
-            
-
-
-            // Log::info('new phan tram '.$phantram);
       });
 
             Log::info('create job done !!!!  ');

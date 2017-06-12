@@ -132,9 +132,9 @@ echo 'DONE';
 
 
 Route::get('test',function(){
-	$a =4;
 
-	return view('test',compact('a'));
+
+	return view('test');
 
 
 
@@ -143,13 +143,19 @@ Route::get('test',function(){
 
 Route::get('ajax',function(){
 
- return '26';
+$html = '<p>3</p><br>';
+
+  return $html;
 
 
 
 });
 Route::get('test2',function(){
 
+$user = DB::table('users')->orderBy('id', 'desc')->value('id');
+
+dd($user);
+	 
 });
 
 

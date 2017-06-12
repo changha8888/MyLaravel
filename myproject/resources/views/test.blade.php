@@ -43,7 +43,7 @@
 				data:{name:5 },
 				success:function(data){
 					console.log(data);
-					$('h1').html(data+'%');
+					$('h1').append(data+'%');
 
 						if(data < 100){
 

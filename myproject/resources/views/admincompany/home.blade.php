@@ -17,14 +17,21 @@
 	<div class="row">
 		<div class="col-md-6">
 			<form>
-
+			
 				<legend>{{$company->name}}</legend>
 
 				<a href="{{route('register',$company->id_company)}}" class="btn btn-primary">Register User</a>
 
 				<a href="{{url('upload',$company->id_company)}}" class="btn btn-info">Upload File</a>
 
-				<a href="{{url('error-file',$company->id_company)}}" class="btn btn-danger">File Error</a>
+				@if(app('request')->input('file_name'))
+
+				<a href="{{url('error-file/'.$company->id_company.'?file_name='.app('request')->input('file_name'))}}" class="btn btn-danger">Log</a>
+
+				@endif
+
+
+				<!-- <a href="{{url('error-file',$company->id_company)}}" class="btn btn-danger">Log</a> -->
 
 			</form>
 		</div>
