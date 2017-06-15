@@ -74,9 +74,9 @@ Route::get('upload/{id}',['as'=>'upload','uses'=>'CompanyController@upload' ]);
 
 Route::post('importUser',['as'=>'importUser','uses'=>'CompanyController@importUser' ]);
 
-Route::get('error-file/{id}',['as'=>'error','uses'=>'CompanyController@ErrorFile' ]);
+Route::get('log-upload/{id}',['as'=>'log-upload','uses'=>'CompanyController@LogUpload' ]);
 
-Route::get('file-detail/{id}/{filename}',['as'=>'detail','uses'=>'CompanyController@FileDetail' ]);
+Route::get('file-detail/{id_company}/{id}/{filename}',['as'=>'detail','uses'=>'CompanyController@FileDetail' ]);
 
 Route::get('status-process/{id_company}/{file_name}',['as'=>'status-process','uses'=>'CompanyController@StatusUpload' ]);
 
@@ -100,6 +100,8 @@ DB::table('users')->where('role', '=', 4)->delete();
 DB::table('jobs')->delete();
 
 DB::table('error_users')->delete();
+
+DB::table('upload_log')->delete();
 
                  
 echo 'DONE';
@@ -152,10 +154,8 @@ $html = '<p>3</p><br>';
 });
 Route::get('test2',function(){
 
-$user = DB::table('users')->orderBy('id', 'desc')->value('id');
-
-dd($user);
-	 
+return view('test');
+	
 });
 
 

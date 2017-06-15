@@ -13,6 +13,7 @@ use Excel;
 use File;
 use Auth;
 use App\Jobs\UploadFileExcel;
+use App\Jobs\InitJobUploadFile;
 use Log;
 
 class CompanyController extends Controller
@@ -187,139 +188,42 @@ class CompanyController extends Controller
 
       $file->move($dir_path,$file_name);
 
-              // Create file Excel record user error.
+      $id_log_file = DB::table('upload_log')->insertGetId(
+            ['file_name' => $file_name, 'number_job' => '','status' => 'pending','created_at'=> date('Y-m-d H:i:s')]
+        );
 
-      $without_extension = substr($file_name, 0, strrpos($file_name, "."));
+    $count = DB::table('jobs')->count();
 
-              // Create file TXT process percent.
-
-      $file_txt_1 = $dir_path.'/Percent_'.$without_extension.'.txt';
-
-      $handle_1 = fopen($file_txt_1, 'w');
-
-      $data_1 = "0";
-
-      fwrite($handle_1, $data_1);
-
-      $file_txt_2 = $dir_path.'/Pace_'.$without_extension.'.txt';
-
-      $handle_2 = fopen($file_txt_2, 'w');
-
-      $data_2 = "0";
-
-      fwrite($handle_2, $data_2);
-
-
-      $dir_path_file = $dir_path.'/'.$file_name;
-
-      $job = new UploadFileExcel($id_company,$dir_path,$file_name);
-
+    if($count == 0){
+      $job = new UploadFileExcel($id_company,$dir_path,$file_name,$id_log_file);
       dispatch($job);
-
-
-          // return redirect()->route('admin_company', ['id_company' =>  $id_company,'file_name'=>$file_name ]);
-
-        $current_user = DB::table('users')->count();
-
-      return view('admincompany.status-upload',compact('file_name','id_company','current_user'));
     }
 
-    public function ErrorFile(Request $request,$id_company){
 
-       $file_name =$request->input('file_name');
+      return redirect()->route('admin_company', ['id_company' =>  $id_company]);
 
-       $without_extension = substr($file_name, 0, strrpos($file_name, "."));
-
-       $current_user = DB::table('users')->count();
-
-
-return view('admincompany.status-upload',compact('without_extension','id_company','current_user'));
-
-
-      $dir_path = storage_path('user_data'.'/'.$id_company);   
-
-      // $file = scandir($dir_path);
-      if(!is_dir($dir_path)){
-
-        return redirect()->back();
-      }
-      $file = scandir($dir_path);
-
-      $k = 0;
-      foreach ($file as $value) {
-
-        $file_extension = substr($value, strrpos($value, "."));
-
-        if($file_extension != '.txt'){
-          $k++;
-          $file_name[$k] = $value;
-        }
-      } 
-
-      $file_name = array_slice($file_name,2);
-
-    return view('admincompany.error-file',compact('file_name','id_company'));
+    
     }
 
-    // public function FileDetail($id_company,$filename){
+    public function LogUpload($id_company){
 
-    //   $error_users = DB::table('error_users')
-    //   ->where('file', '=', $filename)
-    //   ->where('id_company','=', $id_company)
-    //   ->get();
+      $list_file = DB::table('upload_log')->paginate(10);
 
-    //   return view('admincompany.detail-file',compact('error_users','id_company'));
-    // }
+      return view('admincompany.log-file',compact('list_file','id_company'));
 
-    public function GetStatus(Request $request){
-
-      $id =  $request->input('id');
-      $file_name =  $request->input('file_name');
-      $without_extension = substr($file_name, 0, strrpos($file_name, "."));
-      $current_user =  $request->input('current_user');
-      $test =  $request->input('test');
-
-      $file_path = storage_path('user_data'.'/'.$id.'/Percent_'.$without_extension.'.txt');
-
-      $file_content = file_get_contents($file_path);
-
-          $ahihi = DB::table('users')->first();
-
-      $user = DB::table('users')->count();
-
-      $new = $user - $current_user;
-
-      if($test == 0 ){
-
-        $err_user  = DB::table('error_users')->where('file','=',$file_name)->get();
-
-        if($err_user == null){
-
-          $test = 0;
-
-        }else{
-          $test = DB::table('error_users')->orderBy('id', 'desc')->value('id');
-        }
-
-      }else{
-        $err_user = DB::table('error_users')->where('id','>',$test)->where('file','=',$file_name)->get();
-
-        $test = DB::table('error_users')->orderBy('id', 'desc')->value('id');
-      }
-
-      // $err_user = DB::table('error_users')->get();
-
-      $percent = file_get_contents($file_path);
-
-      $info = [
-        
-        'err' => $err_user,
-        'percent' => $percent,
-        'new' => $new,
-        'test' => $test
-
-      ];
-      return json_encode($info);
-      
+     
     }
+
+    public function FileDetail($id_company,$id,$filename){
+
+      $error_users = DB::table('error_users')
+      ->where('file', '=', $filename)
+      ->where('id_company','=', $id_company)
+      ->where('id_log_file','=', $id)
+      ->paginate(10);
+
+      return view('admincompany.detail-file',compact('error_users','id_company'));
+    }
+
+    
 }

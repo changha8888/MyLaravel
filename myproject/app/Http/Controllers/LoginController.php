@@ -16,6 +16,10 @@ use DB;
 class LoginController extends Controller
 {
     //
+
+    public function __construct(){
+        $this->middleware('loginform');
+    }
     
     public function getLogin(){
     	return view('login');

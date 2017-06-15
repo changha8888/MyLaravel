@@ -13,6 +13,7 @@ use App\Users;
 use Validator;
 use DB;
 use File;
+use App\Jobs\InitJobUploadFile;
 
 
 class UploadFileExcel implements ShouldQueue
@@ -22,16 +23,18 @@ class UploadFileExcel implements ShouldQueue
     protected $id;
     protected $dir_path;
     protected $file_name;
+    protected $id_log_file;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($id,$dir_path,$file_name)
+    public function __construct($id,$dir_path,$file_name,$id_log_file)
     {
         $this->id = $id;
         $this->dir_path = $dir_path;
         $this->file_name = $file_name;
+        $this->id_log_file = $id_log_file;
         //
 
         Log::info('CONSTRUCT');
@@ -48,11 +51,12 @@ class UploadFileExcel implements ShouldQueue
         $id     = $this->id;
         $dir_path   = $this->dir_path;
         $file_name   = $this->file_name;
+        $id_log_file  = $this->id_log_file;
 
         $dir_path_file = $dir_path.'/'.$file_name;
 
 
-           Excel::filter('chunk')->load($dir_path_file)->chunk(200, function($results) use($id,$file_name,$dir_path)
+           Excel::filter('chunk')->load($dir_path_file)->chunk(200, function($results) use($id,$file_name,$dir_path,$id_log_file)
         { 
             
             foreach($results as $row)
@@ -99,10 +103,10 @@ class UploadFileExcel implements ShouldQueue
                         'id_company' => $id, 
                         'file'      => $file_name,
                         'id_excel_file'=> $row->id,
+                        'id_log_file' =>  $id_log_file,
                         'status'    => 'User already exist'
                          ]);
-
-                  Log::info('ID  :'.$row->id.'-- email  :'.$row->email);
+  
 
                 }
                 if($validator->fails()){
@@ -114,59 +118,55 @@ class UploadFileExcel implements ShouldQueue
                         'id_company' => $id, 
                         'file'      => $file_name,
                         'id_excel_file'=> $row->id,
+                        'id_log_file'   => $id_log_file,
                         'status'    => 'User not full infomation'
                          ]);
                 }
 
-
-                // if($user != null || $validator->fails() || $row->email == null) {
-
-
-                //   $name = ($row->name !=null) ? $row->name : '';
-                //   $email = ($row->email !=null) ? $row->email : '';
-                //   $password = ($row->password !=null) ? $row->password : '';
-
-                //    DB::table('error_users')->insert(
-                //         ['name'     => $name,
-                //         'email'     => $email,
-                //         'password'  => $password,
-                //         'id_company' => $id, 
-                //         'file'      => $file_name,
-                //          ]);
-
-                //    Log::info('id '.$row->id);
-
-                // }
             }
 
             $without_extension = substr($file_name, 0, strrpos($file_name, "."));
 
+            $number_job = DB::table('upload_log')->where('file_name', $file_name)->value('number_job');
+
+            $check  = DB::table('upload_log')->where('status','pending')->count();
             $count = DB::table('jobs')->count();
 
-            $pace = 100/$count;
+            Log::info('countttt '.$count);
 
-            // Read file percent process.
+           
+            $abc = DB::table('upload_log')->where('file_name', $file_name)->where('status','<>' ,'completed')->value('status');
+            if($count != 1 && $abc != 'completed' ) {
 
-            $percent_file = $dir_path.'/Percent_'.$without_extension.'.txt';
-            $pace_file = $dir_path.'/Pace_'.$without_extension.'.txt';
+                 DB::table('upload_log')
+                ->where('file_name', $file_name)
+                ->where('status','<>' ,'completed')
+                ->update(['number_job' => $count -1 ,'status' => 'processing']);
 
-            $file_contents = file_get_contents($pace_file);
+            }if($count == 1){
 
-            if($file_contents == '0'){
+                DB::table('upload_log')
+                ->where('file_name', $file_name)
+                ->update(['number_job' => 0 ,'status' => 'completed' ]);
 
-                $pace_value = str_replace("0",$pace,$file_contents);
-                file_put_contents($pace_file,$pace_value);
+
+                $get_file_name = DB::table('upload_log')->where('status','pending')->first();
+
+                if($get_file_name){
+                    $file_name = $get_file_name->file_name;
+
+                    $dir_path = storage_path('user_data'.'/'.$id);
+
+                    $job = new InitJobUploadFile($id,$dir_path,$file_name,$id_log_file);
+                    dispatch($job);
+                }
+
             }
-
-            $new_percent = floatval(file_get_contents($percent_file)) + floatval(file_get_contents($pace_file));
-
-            $percent_value = file_get_contents($percent_file);
-            $percent_value = str_replace(file_get_contents($percent_file),$new_percent,$percent_value);
-            file_put_contents($percent_file,$percent_value);
-
 
       });
 
             Log::info('create job done !!!!  ');
+
+
     }    
 }

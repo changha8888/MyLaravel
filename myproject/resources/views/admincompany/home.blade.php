@@ -24,11 +24,9 @@
 
 				<a href="{{url('upload',$company->id_company)}}" class="btn btn-info">Upload File</a>
 
-				@if(app('request')->input('file_name'))
 
-				<a href="{{url('error-file/'.$company->id_company.'?file_name='.app('request')->input('file_name'))}}" class="btn btn-danger">Log</a>
+				<a href="{{url('log-upload/'.$company->id_company)}}" class="btn btn-warning">Log Upload File</a>
 
-				@endif
 
 
 				<!-- <a href="{{url('error-file',$company->id_company)}}" class="btn btn-danger">Log</a> -->
