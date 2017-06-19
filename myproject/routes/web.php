@@ -140,6 +140,7 @@ Route::get('test',function(){
 
 
 
+
 });
 
 
@@ -158,7 +159,12 @@ return view('test');
 	
 });
 
-
+Route::get('tool',['as' => 'tool', 'uses' => 'ToolController@Index']);
+Route::get('addtool',['as'=>'getAddTool','uses'=>'ToolController@getAdd']);
+Route::post('addtool',['as'=>'postAddTool','uses'=>'ToolController@postAdd']);
+Route::get('edit/{id}',['as'=>'getEditTool', 'uses'=>'ToolController@getEdit']);
+Route::post('edit/{id}',['as'=>'postEditTool', 'uses'=>'ToolController@postEdit']);
+Route::get('delete/{id}',['as'=>'getDeleteTool', 'uses'=>'ToolController@getDelete']);
 
 
 

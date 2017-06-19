@@ -179,6 +179,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        UxWeb\SweetAlert\SweetAlertServiceProvider::class,
 
     ],
 
@@ -234,6 +235,7 @@ return [
         'Sentinel'   => Cartalyst\Sentinel\Laravel\Facades\Sentinel::class,
         
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+         'Alert' => UxWeb\SweetAlert\SweetAlert::class,
     ],
 
 ];
